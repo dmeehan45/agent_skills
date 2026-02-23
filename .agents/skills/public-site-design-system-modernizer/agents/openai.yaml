@@ -1,0 +1,4 @@
+interface:
+  display_name: "Public Site Design System Modernizer"
+  short_description: "Analyze a public website and generate a brand-faithful modernized design system package (tokens, components, patterns, dev/designer handoff) without cloning source layouts."
+  default_prompt: "Create a brand-faithful modernized design system from this public website. Use a bounded representative crawl, extract visual/voice/component evidence, preserve brand character, normalize inconsistency, improve accessibility, and export the full markdown+JSON handoff package."
