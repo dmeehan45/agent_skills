@@ -1,8 +1,8 @@
 # Patterns — how strong teams process feedback, and what this skill borrows
 
 Distilled from primary sources (researched 2026-07). Each entry: the pattern,
-where it comes from, and how it applies at Avani's scale — a two-person team,
-low dozens of feedback items a week, one accountable reviewer (David), and
+where it comes from, and how it applies at the app's scale — a two-person team,
+low dozens of feedback items a week, one accountable reviewer (the maintainer), and
 eval machinery that already exists. The skill's spine encodes these; this file
 is the why behind the spine.
 
@@ -87,12 +87,12 @@ relevant here when a fix blocks trust (safety, billing) rather than revenue.
 **Inner loop / outer loop** (Bain, Net Promoter System,
 bain.com/insights/the-net-promoter-systems-inner-loop). Answer the person
 (inner) and fix the pattern (outer); leaders read verbatims, not summaries.
-At Avani's volume the inner loop is personal: a direct "you told us X, we
-changed Y" note from David to each reporter. Canny and Linear automate this
+At the app's volume the inner loop is personal: a direct "you told us X, we
+changed Y" note from the maintainer to each reporter. Canny and Linear automate this
 at scale (canny.io/blog/canny-changelog); we do it by hand because we can,
 and because for a parent who flagged an AI-behavior concern it is the
 single cheapest trust lever the product owns. The skill drafts the note;
-David sends it or doesn't.
+the maintainer sends it or doesn't.
 
 ## AI-product practice
 
@@ -106,7 +106,7 @@ taxonomy with counts; build evaluators only for failure modes that persist.
 One "benevolent dictator" annotator beats a committee at small scale. Here:
 the conversation_feedback failure_tags already map 1:1 to eval dimensions;
 this skill's investigation stage applies first-failure reading to any
-transcript excerpt David shares.
+transcript excerpt the maintainer shares.
 
 **Complaint → eval case → regression suite** (Hamel; LangSmith,
 langchain.com/resources/llm-evals). Every confirmed AI-behavior failure

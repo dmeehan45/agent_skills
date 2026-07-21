@@ -44,8 +44,8 @@ behavior; oversized handlers with mixed responsibilities (`chat.ts` is
 ~2.5k lines — findings here are maintainability unless measured).
 
 Discipline: any removal claim passes handoff-audit's two-signal rule and
-false-positive trap table
-(`.claude/skills/handoff-audit/references/scan-playbook.md` §4). Report
+false-positive trap table (the handoff-audit skill's scan playbook, §4).
+Report
 maintainability separately from measured runtime cost. Whole-repo
 dead-code sweeps → defer to `handoff-audit`.
 

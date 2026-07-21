@@ -1,31 +1,38 @@
 ---
 name: conversational-ai-efficiency-audit
 description: >-
-  Audit the complete Avani conversational AI system for measurable
+  Audit a complete conversational AI system for measurable
   opportunities to reduce cost, latency, token usage, model calls, and
   runtime complexity without degrading experience quality, behavioral
   safety, privacy/ZDR, or reliability. Use when asked for an efficiency,
   cost, token, or latency audit; a cost-per-conversation or unit-economics
-  model; "why is Avani slow / expensive"; a prompt-cache or context-window
-  analysis; a model-call inventory; or a pre-scale-up review. It maps the
-  request path, builds the cost and latency ledger from real telemetry
-  (conversation_turn_metric, Langfuse, Vercel, Supabase), inventories every
-  model-backed activity including crons, evals, and admin surfaces,
-  attributes prompt tokens block by block, and files an evidence-graded
-  report with ranked, pre-registered experiments in
-  docs/production-readiness/. Audit-only: it never implements optimizations
-  in the same pass. Not for whole-repo maintainability (handoff-audit),
-  product QA (qa-sweep), single-diff review (/code-review), security
-  (/security-review), or authoring harness changes (/change-pass and
-  /eval-changeset implement those).
+  model; "why is the assistant slow / expensive"; a prompt-cache or
+  context-window analysis; a model-call inventory; or a pre-scale-up
+  review. It maps the request path, builds the cost and latency ledger
+  from real telemetry (conversation_turn_metric, Langfuse, Vercel,
+  Supabase), inventories every model-backed activity including crons,
+  evals, and admin surfaces, attributes prompt tokens block by block, and
+  files an evidence-graded report with ranked, pre-registered experiments
+  in docs/production-readiness/. Audit-only: it never implements
+  optimizations in the same pass. Not for whole-repo maintainability
+  (handoff-audit), product QA (qa-sweep), single-diff review
+  (/code-review), security (/security-review), or authoring harness
+  changes (/change-pass and /eval-changeset implement those).
 argument-hint: "[full | scoped:<subsystem> | refresh]"
 ---
 
-# Conversational AI efficiency audit (Avani)
+# Conversational AI efficiency audit
 
 The objective is not the cheapest individual turn. It is the lowest
 sustainable cost per successful, safe, high-quality conversation. The
 deliverable is an evidence-graded report and experiment backlog, not a diff.
+
+> Written against a reference implementation — a TypeScript app on Vercel
+> and Supabase (Postgres) with an LLM gateway (per-task model env vars),
+> prompt caching, PostHog and Langfuse telemetry, and an eval "harness"
+> workflow. The file paths, table names, environment variables, command
+> names, and sibling-doc references below are examples from that
+> implementation — map them to the equivalents in your own codebase.
 
 The failure mode this method prevents: plausible-sounding optimizations
 built on unmeasured assumptions — trimming a prompt block an eval depends
@@ -80,13 +87,13 @@ lists, model-call census seed, optimization ladder, prohibited shortcuts),
    (e.g. `scoped:context-cache`, `scoped:crons` — run phases 1–3 for the
    boundary plus the deep phase for that subsystem), or `refresh`
    (re-measure the ledger and diff `audit-data.json` against the prior
-   audit, no new deep reading). If David named a scope, honor it; a bare
+   audit, no new deep reading). If the maintainer named a scope, honor it; a bare
    invocation means `full`.
 2. **Snapshot** the commit SHA and define the data window (default: last 30
    days, or since the prior audit).
 3. **Prior art first** — do not rediscover: the latest
    `docs/production-readiness/efficiency-audit-*/` (if any → incremental
-   mode), `handoff-audit-*.md`, `avani-observability-eval-strategy.md`,
+   mode), `handoff-audit-*.md`, `observability-eval-strategy.md`,
    `docs/plans/cache-hit-rate-improvement.md`,
    `docs/plans/cache-zero-day-investigation.md`, recent `qa/daily-*.md`,
    and `do-not-optimize.md` from the prior audit (re-proposing a rejected
@@ -153,7 +160,7 @@ retained for obsolete behavior — checklist in checklists §3. Scope
 discipline: whole-repo dead-code and dependency sweeps belong to
 `handoff-audit`; anything resembling a removal claim must pass that
 skill's two-signal rule and false-positive trap table
-(`.claude/skills/handoff-audit/references/scan-playbook.md` §4). Report
+(the handoff-audit skill's scan playbook, §4). Report
 maintainability findings separately from measured-runtime findings.
 Output: `static-code-findings.md`.
 
@@ -229,11 +236,11 @@ so the wins persist.
 
 Commit to the working branch, push, and surface the branch preview URL per
 the repo contract (preview-qa). In the wrap-up: executive summary, honest
-coverage statement, the top three experiments, open questions for David,
+coverage statement, the top three experiments, open questions for the maintainer,
 teaching notes. Then stop — implementation is a separate, per-item,
 explicitly approved follow-up.
 
-## Avani invariants (constraints on every recommendation)
+## Invariants (constraints on every recommendation)
 
 - **Gateway + ZDR routing stays.** The Vercel AI Gateway credential and
   env-var routing pattern (`AI_GATEWAY_*`, per-task model env vars) is the

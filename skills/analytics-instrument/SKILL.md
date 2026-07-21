@@ -15,16 +15,22 @@ description: >-
   registered events with no call site fail as orphans). Not for choosing what
   to measure strategically (that is a product conversation), not for admin UX
   telemetry (deliberately unmeasured — the audit trail is admin_audit_log),
-  and not for the AI harness's own eval metrics. Repo: dmeehan45/satsang-dev.
+  and not for the AI harness's own eval metrics.
 ---
 
-# Analytics instrumentation (Satsang / Avani)
+# Analytics instrumentation
 
 The product's analytics are governed by one catalog and a pair of tripwires.
 Instrumenting a change means making four seams agree: the call site, the
 catalog, the server union (if server-fired), and the PR description. This
 skill walks that, plus the two rules with no compiler behind them: admin
 suppression and PII discipline.
+
+> Written against a reference implementation — a TypeScript app with a single
+> central analytics event catalog, PostHog client- and server-side capture, and
+> contract tests that enforce the catalog in both directions. The file paths,
+> event/table names, and command names below are examples from that
+> implementation — map them to the equivalents in your own codebase.
 
 **When to invoke.** Any PR touching a user-facing surface; any new
 `trackEvent`/`captureServer` call; an event rename or removal; a new
@@ -112,7 +118,7 @@ marker is the sanctioned way.
 **Removing.** Before deleting a name, check whether any saved PostHog
 insight, funnel, or cohort references it (PostHog → Data Management →
 Events; the quarterly `scripts/posthog-audit.mjs` report also lists broken
-dashboard references). If referenced, flag it to David instead of deleting.
+dashboard references). If referenced, flag it to the maintainer instead of deleting.
 Then remove catalog entry and call sites together, or the orphan/forward
 tripwires fire.
 

@@ -1,9 +1,9 @@
 ---
 name: handoff-audit
 description: >-
-  Comprehensive codebase handoff audit for Satsang (dmeehan45/satsang-dev),
-  run as a senior staff engineer preparing a prototype for handoff to a
-  maintained dev team. Use when asked for a handoff audit, full codebase
+  Comprehensive codebase handoff audit, run as a senior staff engineer
+  preparing a prototype for handoff to a maintained dev team. Use when
+  asked for a handoff audit, full codebase
   audit, dead-code or unused-code sweep, cleanup-opportunity review,
   tech-debt assessment, production-readiness review, maintainability
   review, or "what breaks at a million users". It censuses the repo,
@@ -11,22 +11,24 @@ description: >-
   cleanup claim against this repo's known false-positive traps, and
   produces a structured, evidence-graded report checked into
   docs/production-readiness/. It never deletes or modifies product code —
-  report first, cleanup only after David approves specific items. Not for
-  reviewing a single diff (/code-review), a single surface
+  report first, cleanup only after the maintainer approves specific items.
+  Not for reviewing a single diff (/code-review), a single surface
   (adversarial-review), or security-only review (/security-review). For
   the recurring biweekly maintenance cycle that consumes this report,
   works the tech-debt register, and executes one bounded improvement per
   run, use readiness-loop.
 ---
 
-# Codebase handoff audit (Satsang)
+# Codebase handoff audit
 
 This skill prepares the prototype for handoff to a professional dev team. It
 answers four questions with evidence: what can be safely removed or
 simplified, what is misleading or undocumented, what must be hardened before
 production, and what breaks on the road to one million users. The deliverable
-is a report, not a diff. Cleanup happens later, item by item, after David
-approves.
+is a report, not a diff. Cleanup happens later, item by item, after the
+maintainer approves.
+
+> Written against a reference implementation — a TypeScript React/Vite SPA with filesystem-routed Vercel serverless functions, a Supabase Postgres database with an append-only migration ledger, contract tests that grep source, scheduled cron jobs, and a PostHog analytics catalog. The file paths, table names, environment variables, command names, and sibling-doc references below are examples from that implementation — map them to the equivalents in your own codebase.
 
 The failure mode this method prevents: an auditor eyeballs the repo, calls
 things "unused" from a single missing import, and the cleanup PR breaks a
@@ -166,7 +168,7 @@ the working branch (never `main`), commit, push, and surface the branch
 preview URL per the repo contract. In the chat wrap-up: lead with the
 executive summary, state coverage honestly (what the census contained and
 what was actually examined — no silent sampling), list the top "Needs Human
-Confirmation" questions so David can answer inline, and close with the
+Confirmation" questions so the maintainer can answer inline, and close with the
 teaching notes. Then stop. Cleanup execution is a separate, per-item,
 explicitly approved follow-up — each approved item becomes its own small
 branch/PR with the validation step from its report row.

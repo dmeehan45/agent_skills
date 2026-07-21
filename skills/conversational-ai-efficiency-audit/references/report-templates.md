@@ -43,7 +43,7 @@ each prior finding resolved / open / regressed.
 7. `static-code-findings.md` — code findings **on the AI runtime path
    only**, with measured-runtime findings separated from maintainability
    findings. Every removal claim passes the handoff-audit trap table
-   (`.claude/skills/handoff-audit/references/scan-playbook.md` §4).
+   (the handoff-audit skill's scan playbook, §4).
    Whole-repo dead-code sweeps are deferred to `handoff-audit`.
 8. `optimization-opportunities.md` — all ranked findings, full schema below.
 9. `experiment-backlog.md` — sequenced experiments, full schema below, one

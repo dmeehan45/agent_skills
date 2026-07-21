@@ -1,23 +1,23 @@
 ---
 name: adversarial-review
 description: >-
-  Adversarial review of a Satsang surface from the perspective of the toughest
-  parent, investor, designer, and clinician. Use when pressure-testing or
-  hardening a surface: a marketing page (home, about, approach, a comparison
-  page, the quiz funnel, refer-a-friend), or a product surface (onboarding, the
-  paywall and upgrade sheet, Talk, Tools, Plans, Reflections). It finds the
-  prioritized reasons the surface fails a sharp reader, traces each to a root
-  cause, weighs candidate fixes, picks one, and closes the gap in the source. It
-  attacks positioning, proof, persuasion, and duty of care, the strategic
-  failures the other skills do not catch. Defers voice to
-  satsang-writing-style-guide.md and content-rigor, UI to
-  satsang-design-system.md and frontend-polish, claim truth to content-rigor,
-  and the AI's live conversational behavior to the harness and evals
-  (change-pass, eval-changeset, docs/governance, docs/safety). Not for the
-  model's turn-by-turn output; review that with the eval loop.
+  Adversarial review of a product or marketing surface from the perspective of
+  the toughest parent, investor, designer, and clinician. Use when
+  pressure-testing or hardening a surface: a marketing page (home, about,
+  approach, a comparison page, the quiz funnel, refer-a-friend), or a product
+  surface (onboarding, the paywall and upgrade sheet, Talk, Tools, Plans,
+  Reflections). It finds the prioritized reasons the surface fails a sharp
+  reader, traces each to a root cause, weighs candidate fixes, picks one, and
+  closes the gap in the source. It attacks positioning, proof, persuasion, and
+  duty of care, the strategic failures the other skills do not catch. Defers
+  voice to writing-style-guide.md and content-rigor, UI to design-system.md and
+  frontend-polish, claim truth to content-rigor, and the AI's live
+  conversational behavior to the harness and evals (change-pass, eval-changeset,
+  docs/governance, docs/safety). Not for the model's turn-by-turn output; review
+  that with the eval loop.
 ---
 
-# Adversarial review (Satsang)
+# Adversarial review
 
 This skill runs a hostile but fair review of a surface and then closes the gaps
 it finds. It plays the four readers who decide whether the product wins: the
@@ -26,6 +26,8 @@ value lasts, the designer who has to be convinced the surface works, and the
 clinician who has to find it responsible. Each attacks a different surface.
 Together they answer the only question that matters: would this survive the
 sharpest version of the person it is written for.
+
+> Written against a reference implementation — a mobile-first TypeScript React SPA with an i18n catalog (marketing copy as translation keys), a locked design system, Stripe billing, and an LLM "harness". The file paths, i18n keys, command names, and sibling-doc references below are examples from that implementation — map them to the equivalents in your own codebase.
 
 The repo already holds reviews at the caliber this skill is meant to produce.
 Read one before you start: `qa/landing-design-critique-2026-04-27.md` (the
@@ -41,12 +43,6 @@ The output is not a critique for its own sake. It is a prioritized set of
 findings, each mapped to a chosen solution, applied to the source, verified, and
 handed over on a preview. Review, then remediate.
 
-A note on the name. The repo is `satsang-dev` and code identifiers say
-"satsang", but the live user-facing brand is currently "Avani" (admin
-configurable via the branding row), and the docs still say "Sage". That drift is
-itself a reviewable finding (section 2). Throughout this skill, "the product"
-means the app whatever it is currently branded.
-
 ## 0. Scope. What this reviews, and what it defers
 
 Use this on any surface that has to win or keep a parent. Two families:
@@ -58,8 +54,8 @@ Use this on any surface that has to win or keep a parent. Two families:
   `/moments/:slug`).
 - **Product and experience surfaces.** Onboarding (`OnboardingIntroPage`,
   `src/features/onboarding/`), the paywall and upgrade sheet
-  (`src/paywall/`, `src/components/satsang/UpgradeSheet.tsx`), Home and Talk
-  (`SatsangHomePage`, `TalkPage`), Tools, Plans, Reflections, and the shared
+  (`src/paywall/`, `src/components/app/UpgradeSheet.tsx`), Home and Talk
+  (`HomePage`, `TalkPage`), Tools, Plans, Reflections, and the shared
   chrome. It reviews a whole surface as an argument or an experience aimed at a
   parent, not a paragraph in isolation.
 
@@ -74,15 +70,15 @@ this is and whether it is safe for their family; is the surface responsible.
 It defers the layers the other skills and standards already own, and routes
 fixes to them rather than restating their rules.
 
-- Voice, punctuation, and the AI-tell bans: `docs/satsang-writing-style-guide.md`
-  (marketing, articles, long-form) and Section 2 of `docs/satsang-design-system.md`
+- Voice, punctuation, and the AI-tell bans: `docs/writing-style-guide.md`
+  (marketing, articles, long-form) and Section 2 of `docs/design-system.md`
   (in-product microcopy). This skill flags that a line does not make the case; the
   writing guide governs whether the line is on-voice.
 - Whether a claim is true and traceable: the `content-rigor` skill. This skill
   flags that a claim is unproven to the reader; content-rigor governs whether it
   is sourced at all.
 - Visual design language, layout, motion, imagery, the conversation UI:
-  `docs/satsang-design-system.md` and the `frontend-polish` skill.
+  `docs/design-system.md` and the `frontend-polish` skill.
 - Functional, interaction, responsive, and mobile behavior: the Playwright
   suites (`npm run test:mobile`) and the mobile QA notes in `qa/mobile-*.md`.
 - **The AI's live conversational behavior**, what the assistant actually says
@@ -128,8 +124,8 @@ page is a finding. The design system fixes the palette and type, so an off-token
 accent is a finding. And the product's own copy sets internal facts that must
 agree with each other. Real examples of internal incongruence found in this repo:
 the landing copy says "no card to start" while the Stripe upgrade sheet takes a
-card up front; the README says "Sage" while the app renders "Avani"; the quiz
-calls itself "science-backed" with no study behind it. Internal incongruence is
+card up front; an internal doc names the product differently from what the UI
+renders; the quiz calls itself "science-backed" with no study behind it. Internal incongruence is
 the most defensible critique you can make, because the standard is already agreed.
 
 **Anchor two: every finding is a falsifiable claim tied to a quoted element and a
@@ -240,7 +236,7 @@ Question bank.
   whom. A grandiose or decode-me sentence is the tell (Graham).
 - Once intelligence is cheap and a general model can role-play a warm coach, what
   does this own that is scarce. The product's own answer is the governed harness,
-  Mirra's clinical method, a 100-plus-case eval suite, cross-session memory, and a
+  the founding clinician's clinical method, a 100-plus-case eval suite, cross-session memory, and a
   trusted brand. Does the surface show that as hard-won specificity, or assert it
   as generic optimism (the product's own thesis on `ApproachPage`).
 - Why now. What shift makes this the moment, and why do parents adopt an AI coach
@@ -274,7 +270,7 @@ judgment is a phone judgment. Ground every comment in a heuristic, a stated
 objective, or evidence, so a defect is separable from a preference. "I do not like
 it" is not a finding; a violated heuristic is (Nielsen, and the crit discipline
 from Discussing Design). Route pixel-level and token-level fixes to
-`frontend-polish` and `docs/satsang-design-system.md`, and functional defects to
+`frontend-polish` and `docs/design-system.md`, and functional defects to
 the mobile QA suite; this lens owns whether the surface's structure makes the
 argument land.
 
@@ -438,10 +434,10 @@ surface gets a band-aid on a broken value proposition.
 Apply the chosen fix to the source, then verify. This is where the review becomes
 an improvement.
 
-- **Route the edit to the owner.** Copy follows `docs/satsang-writing-style-guide.md`
+- **Route the edit to the owner.** Copy follows `docs/writing-style-guide.md`
   (and design-system Section 2 for in-product microcopy); run the voice pre-flight
   on every line you rewrite. A UI or layout change follows
-  `docs/satsang-design-system.md` and `frontend-polish`. A functional change is
+  `docs/design-system.md` and `frontend-polish`. A functional change is
   checked against the mobile QA suite. A new or reworded claim has to clear
   `content-rigor` before it ships; do not fix a "prove it" finding by inventing a
   number, a study, or a clinical claim. A safety or crisis or medical-boundary
@@ -456,7 +452,7 @@ an improvement.
   where relevant. A resolution that leaves them disagreeing is a new bug.
 - **Checkpoint before large or positioning-level edits.** A headline rewrite, a new
   value proposition, a change to what the company claims to be, a change to a
-  clinical or privacy claim, or anything that restates positioning is David's call.
+  clinical or privacy claim, or anything that restates positioning is the maintainer's call.
   Present the findings and the recommended fixes, get direction on which to close,
   then edit. Do not silently rewrite the positioning of a live surface. Mechanical
   and Low-severity fixes can be applied directly and shown in the diff.
@@ -469,7 +465,7 @@ an improvement.
   touched layout. The lens that raised each closed finding now passes its kill
   criterion.
 - **Preview, then approval.** Push to the feature branch, confirm the Vercel
-  preview reaches READY, share the URL, and let David QA before anything reaches
+  preview reaches READY, share the URL, and let the maintainer QA before anything reaches
   `main`. Never self-merge. This is the house workflow and it holds here.
 
 ## 9. The review report
@@ -545,7 +541,7 @@ these or the whole skill becomes theater.
 - [ ] Applied fixes routed to the owning skill or standard; any runtime-behavior fix
       routed to the harness (change-pass, eval-changeset), not applied as copy; offer
       changes mirrored across every price and quota source.
-- [ ] Positioning-level, clinical, and privacy edits checkpointed with David, not
+- [ ] Positioning-level, clinical, and privacy edits checkpointed with the maintainer, not
       applied silently.
 - [ ] What is already strong is named.
 - [ ] Verified: typecheck and build green, `npm test` green if touched, voice scan
@@ -554,7 +550,7 @@ these or the whole skill becomes theater.
 
 ## 12. How this fits the other skills and the workflow
 
-- `frontend-polish` and `docs/satsang-design-system.md` build and guard the UI a
+- `frontend-polish` and `docs/design-system.md` build and guard the UI a
   surface sits in. `content-rigor` guards whether its claims are true and sourced.
   The behavior harness (`change-pass`, `eval-changeset`, `docs/governance/`,
   `docs/safety/`) governs what the AI actually says. This skill sits above them and
@@ -569,7 +565,7 @@ these or the whole skill becomes theater.
   when a surface has been live a while and the sell or the trust has gone stale. It
   is a hardening pass, not a first draft. For the AI's conversational quality, use
   the eval loop, not this skill.
-- The house workflow is unchanged. Preview before prod, David approves the
+- The house workflow is unchanged. Preview before prod, the maintainer approves the
   promotion to `main`. A review that ends in a merged change without a preview has
   skipped the gate.
 

@@ -66,7 +66,7 @@ Last verified: YYYY-MM-DD at <sha> (walked end-to-end: yes/no)
      (e.g. Playwright binaries in containers). -->
 ## Your first safe change
 <!-- A worked, low-risk example: branch discipline, which gates run in
-     CI vs locally, preview URL QA flow, who merges (David, only). -->
+     CI vs locally, preview URL QA flow, who merges (the maintainer, only). -->
 ## The rules that bite
 <!-- Pointers with one-line summaries: AGENTS.md contract, migration
      ledger, analytics catalog, i18n propagation, PII discipline. -->
@@ -80,7 +80,7 @@ Last verified: YYYY-MM-DD at <sha> (walked end-to-end: yes/no)
 Last verified: YYYY-MM-DD at <sha>
 
 <!-- 3–7 flows that must keep working. Candidates to confirm with
-     David on bootstrap: signup/onboarding → first conversation;
+     the maintainer on bootstrap: signup/onboarding → first conversation;
      a chat turn (incl. safety + quota); paywall → checkout →
      entitlement; plans + reminders; sleep story generation (spend
      path); account deletion / privacy request. -->

@@ -46,8 +46,8 @@ One row per turn via `recordTurnMetric()`
 `fallback_used`, `provider_used`, `zdr_requested`, `backchannel_*`,
 `guidance_retrieval_skipped`, `deterministic_signal_count`.
 
-Query read-only via `mcp__Supabase__execute_sql` (project `Satsang`, ref
-`facgwtempyxekghnpxth`). Starters — adjust the window to the audit window:
+Query read-only via `mcp__Supabase__execute_sql` against your Supabase
+project (read-only). Starters — adjust the window to the audit window:
 
 ```sql
 -- Daily volume, tokens, recorded cost, cache-read share

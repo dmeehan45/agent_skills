@@ -1,8 +1,8 @@
 ---
 name: readiness-loop
 description: >-
-  Recurring (~every 2 weeks) engineering-readiness loop for Satsang
-  (dmeehan45/satsang-dev): re-baseline the gates, sweep what changed,
+  Recurring (~every 2 weeks) engineering-readiness loop for a codebase:
+  re-baseline the gates, sweep what changed,
   correlate with runtime evidence, work the tech-debt register, execute
   at most ONE bounded low-risk improvement, and keep the living handoff
   docs in docs/engineering/ current — run as the senior engineer
@@ -21,7 +21,7 @@ description: >-
   repo-wide "professionalization" refactor.
 ---
 
-# Engineering-readiness loop (Satsang)
+# Engineering-readiness loop
 
 A future engineer does not need a pristine codebase. They need one they
 can **understand, run, change safely, and diagnose when it breaks**.
@@ -31,6 +31,8 @@ users, what would make the next change safer, what does a new developer
 need to know before touching it — and then does exactly three things:
 refreshes the truth (gates + register + handoff docs), executes at most
 one bounded improvement, and names the next one.
+
+> Written against a reference implementation — a TypeScript React/Vite SPA on Vercel and Supabase, with CI gates, an LLM "harness" workflow, and a living set of engineering handoff docs. The file paths, table names, environment variables, command names, and sibling-doc references below are examples from that implementation — map them to the equivalents in your own codebase.
 
 The failure mode this loop exists to prevent: an agent told to "improve
 code quality" indiscriminately produces churn, speculative abstractions,
@@ -43,14 +45,14 @@ bias is: smaller change, more evidence, better documentation.
 
 | Mode | When | May change product code? |
 | --- | --- | --- |
-| `AUDIT_ONLY` | First run ever, or any run David asks to keep read-only | No — findings + one *proposed* action only |
-| `FIX_LOW_RISK` | Default for recurring runs, once David has reviewed the first report | One change inside the low-risk envelope (§5) |
-| `IMPLEMENT_APPROVED_ITEM` | David names a specific register item | That item only, at whatever scope he approved |
+| `AUDIT_ONLY` | First run ever, or any run the maintainer asks to keep read-only | No — findings + one *proposed* action only |
+| `FIX_LOW_RISK` | Default for recurring runs, once the maintainer has reviewed the first report | One change inside the low-risk envelope (§5) |
+| `IMPLEMENT_APPROVED_ITEM` | The maintainer names a specific register item | That item only, at whatever scope they approved |
 
 If `docs/engineering/ENGINEERING_HEALTH.md` does not exist, this is the
-first run: run `AUDIT_ONLY` and bootstrap the handoff shelf (§7). David
-reviewing that first report is what turns on `FIX_LOW_RISK` for later
-cycles — do not assume it.
+first run: run `AUDIT_ONLY` and bootstrap the handoff shelf (§7). The
+maintainer reviewing that first report is what turns on `FIX_LOW_RISK`
+for later cycles — do not assume it.
 
 Standing rules, every cycle, every mode:
 
@@ -145,8 +147,8 @@ Read through the five lenses in `references/review-lenses.md`
 (correctness & data integrity, security & privacy, maintainability,
 operational readiness, developer experience) — load that file when you
 start this stage. Anything resembling a dead-code or "unused" claim
-must pass handoff-audit's two-signal rule and false-positive trap table
-(`.claude/skills/handoff-audit/SKILL.md` §4) before it is written down;
+must pass the handoff-audit skill's two-signal rule and false-positive
+trap table before it is written down;
 this repo punishes naive scanning (filesystem-routed `api/`, contract
 tests that grep source, string-keyed registries).
 
@@ -189,7 +191,7 @@ Classify every finding by consequence, not effort:
 - **Observation** — worth recording, not currently actionable.
 
 A P0, or a P1 that is live in production, does not wait for the cycle
-report — surface it to David immediately (it belongs in qa/ triage
+report — surface it to the maintainer immediately (it belongs in qa/ triage
 too). Each finding carries: title, priority, evidence, affected
 files/systems, consequence, confidence, recommended action, scope
 (S/M/L), verification method, risk of changing, risk of leaving.
@@ -279,7 +281,7 @@ deletion — dated reports in `qa/` and `docs/` are records (trap 6).
    including what was *not* verified) or, in `AUDIT_ONLY`, the proposal
    with options and a recommendation.
 6. **Docs updated** — which shelf files changed.
-7. **Open questions for David** — specific, answerable inline.
+7. **Open questions for the maintainer** — specific, answerable inline.
 8. **Next cycle's starting point** — one item, named precisely.
 
 Plus, per the house contract: the branch preview URL (READY-confirmed)

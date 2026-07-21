@@ -115,7 +115,7 @@ quality. Number them; make each answerable in one sentence.>
 1. Lead with the executive summary and the report's repo path.
 2. Preview URL for the branch per the repo contract (docs-only change —
    say so; the preview exists regardless).
-3. Surface the section-9 questions inline so David can answer without
+3. Surface the section-9 questions inline so the maintainer can answer without
    opening the report.
 4. Teaching notes: 1–3 concepts tied to what the audit touched.
 5. Stop. No cleanup until specific items are approved; each approved item

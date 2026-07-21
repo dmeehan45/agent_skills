@@ -4,7 +4,7 @@ Load this at Inspect (SKILL.md §2b) and Correlate (§3). These are
 prompts for attention, not a form to fill in — a cycle reports what it
 actually found in the areas it actually read, and says which lenses it
 applied where. Items marked ⚑ are known past findings in this repo
-(from `docs/production-readiness/handoff-audit-2026-07-07.md` and its
+(from a prior handoff-audit report and its
 addenda): verify their *current* state instead of rediscovering them,
 and treat their pattern as a class to hunt for elsewhere.
 
@@ -84,8 +84,8 @@ diagnosis — name it, or the finding is a style preference.
 - Types that vanish at boundaries (`as any` at the API seam, untyped
   JSON columns). ⚑ Files excluded from typecheck are a standing
   register item — do not let the list grow silently.
-- Dead code: apply handoff-audit's two-signal rule and trap table
-  (`.claude/skills/handoff-audit/SKILL.md` §4) before writing the
+- Dead code: apply the handoff-audit skill's two-signal rule and trap
+  table before writing the
   word "unused". ⚑ knip without `knip.json` is unusable here; contract
   tests pin source text; `api/` is filesystem-routed.
 - Comments and docs describing old behavior. ⚑ The README/product-name
@@ -133,7 +133,7 @@ diagnosis — name it, or the finding is a style preference.
   reality each cycle — a wrong map is worse than no map. ⚑ The
   primary walkthrough doc once failed 8 of 13 spot-checks; truthfulness
   beats completeness.
-- Bus factor: which knowledge exists only in David's head or in chat
+- Bus factor: which knowledge exists only in the maintainer's head or in chat
   history? Each cycle should move at least one such fact into the
   shelf — that is often the cheapest high-value "change".
 

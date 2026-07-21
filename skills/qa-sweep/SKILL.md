@@ -6,7 +6,7 @@ description: >-
   carry-forwards). Use when asked to "run the daily sweep", "do a QA pass on
   <surface>", after a burst of merges to main, before flipping a feature flag
   on for everyone, or when the qa/ directory has gone quiet for a while and
-  David wants a fresh read on product health. Scopes: daily (full-product
+  the maintainer wants a fresh read on product health. Scopes: daily (full-product
   diff-driven sweep since the last baseline), surface (one area: admin,
   onboarding, landing, mobile), or visual (screenshot tiles + axe/WCAG via
   the sweep scripts). It runs the automated gates for real, reads the diff
@@ -16,16 +16,21 @@ description: >-
   changes. Not for reviewing a single diff (/code-review), not for
   security-only review (/security-review), not for strategy on one surface
   (adversarial-review), and not the deep handoff audit (handoff-audit).
-  Repo: dmeehan45/satsang-dev.
 ---
 
-# QA sweep (Satsang / Avani)
+# QA sweep
 
 A sweep answers one question with evidence: *what broke or drifted since we
 last looked?* Its output is a report in `qa/` that a future sweep can diff
 against — same buckets, same priority scale, carry-forwards tracked until
 resolved. The discipline that makes reports comparable across months matters
 more than any single finding.
+
+> Written against a reference implementation — a TypeScript React/Vite SPA on
+> Vercel and Supabase, with CI gates (lint/typecheck/test/build), contract
+> tests, a PostHog analytics catalog, and visual-sweep scripts. The file paths,
+> table/event names, command names, and report conventions below are examples
+> from that implementation — map them to the equivalents in your own codebase.
 
 **When to invoke.** "Daily sweep" / "QA pass"; after a merge burst; before a
 flag flips on for everyone; pre-release; any time the latest `qa/daily-*.md`
@@ -122,7 +127,7 @@ house structure — read the most recent daily report first and mirror it:
 
 - **Report, don't repair.** A sweep that quietly fixes what it finds
   destroys the record and skips approval. File findings; fixes are separate
-  PRs on David's direction. (Exception: none. Even a one-line fix is a
+  PRs on the maintainer's direction. (Exception: none. Even a one-line fix is a
   finding first.)
 - Never mark a carry-forward resolved without naming the resolving change.
 - Never soften a status: one open P1 makes the sweep FAIL, per house

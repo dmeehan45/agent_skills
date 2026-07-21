@@ -1,11 +1,11 @@
 ---
 name: process-feedback
 description: >-
-  Process a piece of customer feedback for Avani end-to-end: interpret it with
-  David, investigate the evidence, classify and root-cause it, weigh it, and
-  turn it into a prioritized, sequenced action plan routed to the owning skill
-  or process. Use when David shares user feedback in any form — a parent's
-  email or message, an app-store style review, a support thread, a
+  Process a piece of customer feedback end-to-end: interpret it with the
+  maintainer, investigate the evidence, classify and root-cause it, weigh it,
+  and turn it into a prioritized, sequenced action plan routed to the owning
+  skill or process. Use when the maintainer shares user feedback in any form — a
+  user's email or message, an app-store style review, a support thread, a
   user-interview note, a tester report, selected excerpts of a feedback-session
   transcript — or points at the in-product feedback queues
   (assistant_turn_feedback, conversation_feedback, caretaker_feedback_item).
@@ -21,11 +21,17 @@ argument-hint: <feedback text, transcript excerpt, or where the feedback lives>
 
 # Process feedback: $ARGUMENTS
 
-You are the front door for customer feedback about Avani. A parent said
+You are the front door for customer feedback about the app. A parent said
 something, a tester filed something, a review landed somewhere, and it is now
 your job to turn those words into evidence, a decision, and a sequence of
 actions — without losing what the parent actually said, and without doing
-anything David has not agreed to.
+anything the maintainer has not agreed to.
+
+> Written against a reference implementation — a TypeScript React/Vite SPA on
+> Vercel and Supabase, with in-product feedback tables, an LLM "harness"
+> workflow, PostHog analytics, and admin review queues. The file paths, table
+> names, command names, and sibling-doc references below are examples from that
+> implementation — map them to the equivalents in your own codebase.
 
 If `$ARGUMENTS` is empty, stop and ask for the feedback: pasted text, a
 transcript excerpt, a conversation id, or "sweep the queues since <date>".
@@ -64,15 +70,15 @@ these before anything else:
 - **Never write to the database.** Read-only SELECTs for evidence. Every
   write path (feedback items, change-sets, eval cases, admin records) belongs
   to an owner process with a human approval step — hand off, do not file.
-- **Read-only until David approves action.** Stages 1–6 change nothing but
-  your own brief. Code edits, harness handoffs, and anything user-visible
+- **Read-only until the maintainer approves action.** Stages 1–6 change nothing
+  but your own brief. Code edits, harness handoffs, and anything user-visible
   happen only in Stage 7, after Stage 6 approval, under the AGENTS.md
-  contract (feature branch, smallest diff, preview link, David merges).
+  contract (feature branch, smallest diff, preview link, the maintainer merges).
 - **Safety fast lane.** If the feedback touches crisis handling, self-harm,
   harm to a child, medical boundaries, privacy or data exposure, or a
-  parent's safety-relevant trust: say so to David at the top of your very
-  next message, before any other processing. Safety items never get a solo
-  patch; they route through David with `docs/safety/trust-and-safety.md` in
+  parent's safety-relevant trust: say so to the maintainer at the top of your
+  very next message, before any other processing. Safety items never get a solo
+  patch; they route through the maintainer with `docs/safety/trust-and-safety.md` in
   hand, and any harness change that follows carries safety acceptance
   criteria and a fresh-session eval.
 - **PII discipline in anything persisted.** Briefs are checked in. Strip
@@ -96,7 +102,7 @@ first (Stage 1), then run Stages 2–8 per cluster, worst first.
 ### Stage 0 — Ground yourself
 
 Read `references/routing-map.md`. Note what mode you are in: single item
-(default), transcript session (David pasted selected excerpts of a feedback
+(default), transcript session (the maintainer pasted selected excerpts of a feedback
 conversation), or queue sweep (pull unprocessed `conversation_feedback`,
 reaction aggregates, and open `caretaker_feedback_item` drafts read-only,
 then cluster by failure mode). Check `qa/feedback/` for prior briefs that
@@ -122,7 +128,7 @@ segment (or a flagged unknown).*
 
 ### Stage 2 — Investigate before you interrogate
 
-Never ask David something the repo or the database can answer. For each
+Never ask the maintainer something the repo or the database can answer. For each
 item, sweep (routing map §2–§3 has the concrete paths and queries):
 
 1. **Locate the surface.** Find the exact place the feedback points at:
@@ -131,7 +137,7 @@ item, sweep (routing map §2–§3 has the concrete paths and queries):
    Stage 3.
 2. **Reproduce or read.** For a defect, walk the flow (locally or on a
    preview) and record expected vs actual. For AI behaviour with a
-   conversation id, read the specific conversation David pointed at; apply
+   conversation id, read the specific conversation the maintainer pointed at; apply
    the first-failure rule — annotate the earliest thing that went wrong
    (retrieval, harness rule, latency, UX), because upstream failures cause
    downstream ones and the complaint usually names the last symptom.
@@ -160,37 +166,37 @@ without citations do not survive Stage 6.
 *Exit: per item, an evidence block — surface located, repro or read done,
 prior art checked, reach measured or honestly unknown, promise checked.*
 
-### Stage 3 — Clarify with David (the collaborative gate)
+### Stage 3 — Clarify with the maintainer (the collaborative gate)
 
 This skill interprets nothing ambiguous silently. Where the feedback needs
-interpretation and the repo cannot resolve it, ask David — he has context
-the repo does not (who the reporter is, what was said off-channel, what he
-is willing to change).
+interpretation and the repo cannot resolve it, ask the maintainer — they have
+context the repo does not (who the reporter is, what was said off-channel, what
+they are willing to change).
 
 Ask when any of these hold; otherwise state your assumptions and proceed:
 
 - Two or more plausible readings route to different owners or fixes.
-- No concrete moment exists and only David can supply one (which
+- No concrete moment exists and only the maintainer can supply one (which
   conversation, which screen, roughly when).
 - The reporter's segment or the channel is unknown and it changes weight.
 - The words are paraphrase and the verbatim might exist.
 - Severity is safety-adjacent and the call is not obviously S0.
 - Any candidate fix would touch positioning, pricing, clinical or privacy
-  claims, or the crisis/safety voices — always David's call.
+  claims, or the crisis/safety voices — always the maintainer's call.
 
 Mechanics: batch everything into one `AskUserQuestion` call (at most four
 questions; plain text if the tool is unavailable). Each question carries
 2–4 concrete options with your recommended reading first, marked
 "(Recommended)", and each option's description says what it would change
 ("routes to /change-pass as a pacing item" vs "routes to onboarding copy").
-Bring your Stage 2 evidence into the question text so David decides from
+Bring your Stage 2 evidence into the question text so the maintainer decides from
 facts, not memory. Never ask a question whose answer changes nothing.
 
-If David is unavailable and some items are unambiguous, process those fully
+If the maintainer is unavailable and some items are unambiguous, process those fully
 and park the ambiguous ones in the brief under "awaiting clarification" —
 parked, with the exact questions written down, not guessed at.
 
-*Exit: every interpretation fork resolved by David or explicitly parked;
+*Exit: every interpretation fork resolved by the maintainer or explicitly parked;
 no silent guesses in play.*
 
 ### Stage 4 — Classify and root-cause
@@ -237,7 +243,7 @@ demand; a calibrated tester report weighs more for AI-behavior diagnosis
 than a drive-by reaction. One vivid report is a hypothesis to verify, not a
 mandate and not noise. Run the bias checklist every time: loudest voice,
 recency, the "200 requests = 12 accounts, 9 free" trap, hypothetical
-feedback ("I'd upgrade if…"), and David's — or your — pet hypothesis
+feedback ("I'd upgrade if…"), and the maintainer's — or your — pet hypothesis
 wearing a parent's words.
 
 *Exit: per item, S-grade + reach evidence + weight note, and the bias
@@ -245,7 +251,7 @@ checklist run.*
 
 ### Stage 6 — Propose the plan
 
-Present the whole pass to David in the AGENTS.md response format:
+Present the whole pass to the maintainer in the AGENTS.md response format:
 
 - **What I found (with file paths)** — items, evidence, classifications.
 - **What is happening now** — the current behaviour and its root cause.
@@ -266,14 +272,14 @@ Sequence the plan in explicit order, dependencies named:
 4. Batch actions that share an owner or a file; but harness change-sets run
    one at a time (single-writer rule), so sequence them, worst first.
 5. Opportunities (`missing_capability`) last, framed as decisions for
-   David, never as work you default into. RICE only if two roadmap-scale
+   the maintainer, never as work you default into. RICE only if two roadmap-scale
    bets genuinely compete.
 
 Label each action Now / Next / Later, name its owner route, its update
-site, and what unblocks it. David approves, trims, or redirects the scope.
+site, and what unblocks it. The maintainer approves, trims, or redirects the scope.
 Nothing proceeds without that approval.
 
-*Exit: David has approved a specific set of actions (possibly empty).*
+*Exit: the maintainer has approved a specific set of actions (possibly empty).*
 
 ### Stage 7 — Execute and route
 
@@ -308,16 +314,16 @@ preview URL, change-set id, eval case id) recorded.*
   `qa/feedback/YYYY-MM-DD-<slug>.md`, on the working branch. Every item
   ends in exactly one disposition: `actioned`, `duplicate` (of which
   brief), `declined` (why), `parked` (awaiting what), or `praise-logged`.
-- **Draft the reporter reply** for David when there is a real reporter:
+- **Draft the reporter reply** for the maintainer when there is a real reporter:
   two or three sentences of "you told us X, we changed Y" (or "we decided
   not to, because Z"), in the house voice, no promises about timelines,
-  no confidential detail. David sends it or doesn't; you never contact
+  no confidential detail. The maintainer sends it or doesn't; you never contact
   users.
 - **Define the did-it-work check** per shipped action: the eval case that
   now guards it, the metric to watch (a reaction rate on the guidance ref,
   a funnel step, an error rate), or the manual QA step on the preview —
   and when to look.
-- **Teach.** End with the one to three concepts David should take from
+- **Teach.** End with the one to three concepts the maintainer should take from
   this pass, tied to the files and tables touched.
 
 *Exit: brief committed, dispositions total, reply drafted where relevant,
@@ -338,7 +344,7 @@ One markdown file per processed item or cluster, `qa/feedback/` +
 One line, parent's point of view.
 
 ## Clarifications
-Q → David's answer (or PARKED: awaiting …)
+Q → the maintainer's answer (or PARKED: awaiting …)
 
 ## Evidence
 - surface: file:line / i18n key / atom ref
@@ -348,7 +354,7 @@ Q → David's answer (or PARKED: awaiting …)
 ## Classification & root cause
 class | S-grade | weight note | root cause (design-level)
 
-## Decision (David, date)
+## Decision (maintainer, date)
 Approved: … / Declined: … / Options considered: A vs B, why the winner won
 
 ## Actions
@@ -382,15 +388,15 @@ reply draft: … | did-it-work check: … | re-check when: …
 - [ ] Verbatim preserved and scrubbed; source, date, segment recorded.
 - [ ] Multi-issue feedback split; duplicates attached to the canonical
       brief's demand ledger.
-- [ ] Investigation done before David was asked anything; every
-      interpretation fork either answered by David or parked, never
+- [ ] Investigation done before the maintainer was asked anything; every
+      interpretation fork either answered by the maintainer or parked, never
       guessed.
-- [ ] Safety scan done; any S0 flagged to David first.
+- [ ] Safety scan done; any S0 flagged to the maintainer first.
 - [ ] One class, one root cause (design-level), one restated need per item.
 - [ ] Severity and weight graded separately; bias checklist run; reach
       measured or marked unknown.
 - [ ] Plan presented in the AGENTS.md response format with options,
-      sequence, dependencies, and update sites; David approved before any
+      sequence, dependencies, and update sites; the maintainer approved before any
       edit.
 - [ ] Actions routed to owners; no database writes; no atom-table touches;
       single-writer respected for harness items.
@@ -417,5 +423,5 @@ skill never does.
 
 What this skill uniquely owns: the verbatim-to-decision paper trail, the
 cross-cutting classification (most feedback is not a harness item), the
-reach-and-weight judgment, the sequenced plan David approves once instead
+reach-and-weight judgment, the sequenced plan the maintainer approves once instead
 of five times, and the closed loop back to the person who spoke up.

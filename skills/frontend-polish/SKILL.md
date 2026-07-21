@@ -1,30 +1,32 @@
 ---
 name: frontend-polish
 description: >-
-  Anti-slop design guardrails for building and editing user-facing UI on
-  Satsang: marketing surfaces (landing, about, approach, comparison pages, the
-  quiz funnel) and consumer product surfaces (Home, Talk, Tools, Calm, Sleep,
-  Plans, You, onboarding, the paywall). Keeps new work inside the locked "Quiet
-  Authority" design language in docs/satsang-design-system.md and off the usual
+  Anti-slop design guardrails for building and editing user-facing UI:
+  marketing surfaces (landing, about, approach, comparison pages, the quiz
+  funnel) and consumer product surfaces (Home, Talk, Tools, Calm, Sleep, Plans,
+  You, onboarding, the paywall). Keeps new work inside the locked "Quiet
+  Authority" design language in docs/design-system.md and off the usual
   AI-generated tells, in both the morning and evening themes. The design system
   doc is the authority; this skill is the workflow that keeps you inside it.
-  Copy and voice defer to docs/satsang-writing-style-guide.md and Section 2 of
-  the design system; claim truth defers to content-rigor; the conversation UI
-  spec and the AI's live behavior defer to design-system Section 9 and the
-  harness. Universal token, anti-artifact, motion, and accessibility discipline
-  applies to all UI including admin; the marketing-layout rules apply to
-  expressive surfaces only.
+  Copy and voice defer to docs/writing-style-guide.md and Section 2 of the
+  design system; claim truth defers to content-rigor; the conversation UI spec
+  and the AI's live behavior defer to design-system Section 9 and the harness.
+  Universal token, anti-artifact, motion, and accessibility discipline applies
+  to all UI including admin; the marketing-layout rules apply to expressive
+  surfaces only.
 ---
 
-# Frontend polish (Satsang)
+# Frontend polish
 
 This is a project-specific version of the open-source "taste-skill" anti-slop
 design rules. The original is a generic, multi-client tool that reads an
 arbitrary brief and picks an aesthetic and a design system. We do not do that.
-Satsang has one brand, one stack, and one locked visual language, "Quiet
-Authority", documented in full in `docs/satsang-design-system.md`. That document
+The app has one brand, one stack, and one locked visual language, "Quiet
+Authority", documented in full in `docs/design-system.md`. That document
 is the source of truth. This skill is the workflow that keeps new UI consistent
 with it and free of the patterns that make generated pages look generated.
+
+> Written against a reference implementation — a TypeScript React/Vite SPA using Tailwind v3 with a locked design system and dual light/dark ("morning"/"evening") theming driven by CSS custom properties. The design tokens, class names, file paths, and sibling-doc references below are examples from that implementation — map them to the equivalents in your own codebase.
 
 Read the design system's philosophy and its "Avoiding AI Artifacts" section
 first (Section 1), then pull only the rules that fit what you are building. None
@@ -35,11 +37,6 @@ ask: **"does this feel like a quiet room you want to sit in?"** If it feels busy
 loud, clever, or demanding, the fix is usually a removal, not an addition. The
 user is a tired parent, often at low resources; every choice should make that
 person feel held.
-
-A note on the name. The repo is `satsang-dev` and code identifiers say
-"satsang", but the live user-facing brand is currently "Avani" (admin
-configurable). Design tokens, classes, and the design system all use "satsang";
-this skill does too.
 
 ## 0. Scope
 
@@ -61,7 +58,7 @@ design system's Component Catalog (Section 7) and the admin QA notes
 layout rules do not apply there, but the universal discipline still does.
 
 **Defer, do not restate:**
-- Copy and voice, to `docs/satsang-writing-style-guide.md` (marketing and
+- Copy and voice, to `docs/writing-style-guide.md` (marketing and
   long-form) and Section 2 of the design system (in-product microcopy). Section 9
   of this skill routes there.
 - Whether a claim is true and sourced, to the `content-rigor` skill.
@@ -77,7 +74,7 @@ layout rules do not apply there, but the universal discipline still does.
 
 The original taste-skill spends most of its length helping the model choose a
 palette, a typeface, and a design system per project. None of that applies.
-Satsang already made those choices, in `docs/satsang-design-system.md`, backed by
+The app already made those choices, in `docs/design-system.md`, backed by
 `tailwind.config.js`, `src/index.css`, and `src/lib/theme.ts`. Your job is to
 extend the existing system, not to reach past it. The single most common failure
 mode for new work is introducing a token, color, or font that is not already in
@@ -112,8 +109,8 @@ never raw hex, and never a Tailwind default like `stone-500` or `slate-700`.
   completion), `sky` (informational, links), `amber` (warning, time-sensitive),
   `rose` (error, destructive). Earn every accent. Adding `warmth` somewhere new
   means asking whether that element genuinely needs emphasis.
-- Gradients are the faint radial washes in `.bg-satsang-morning`,
-  `.bg-satsang-evening`, and `.bg-calm-gradient` only. They are felt, not seen.
+- Gradients are the faint radial washes in `.bg-app-morning`,
+  `.bg-app-evening`, and `.bg-calm-gradient` only. They are felt, not seen.
   Never a solid decorative gradient, never violet or electric blue.
 
 **Shape and rhythm (design system Sections 5 and 6).** Reuse the locked scales:
@@ -141,7 +138,7 @@ arbitrary values through components.
 - **No Motion, Framer Motion, or GSAP is installed** (checked in `package.json`).
   Do not import `motion/react`, `framer-motion`, or `gsap`. Animation here is
   Tailwind keyframes plus CSS transitions. There is a large native keyframe set in
-  `src/index.css` (the `satsang-*` keyframes: `satsang-enter`, `satsang-breathe`,
+  `src/index.css` (the `app-*` keyframes: `app-enter`, `app-breathe`,
   and the conversation and sheet animations) exposed as utilities like
   `animate-enter` and `animate-breathe`, plus the motion tokens (`duration-fast`,
   `duration-base`, `duration-slow`, the `ease-calm` timing function). Reach for
@@ -185,7 +182,7 @@ design system's pre-ship checklist starts by grepping the diff for these.
 
 ## 4. Dual theme: morning and evening
 
-Satsang ships a light theme (morning) and a dark theme (evening), resolved from
+The app ships a light theme (morning) and a dark theme (evening), resolved from
 system preference and time of day and switched by the `data-theme` attribute
 (design system Section 15). This is not an afterthought; it is why the token
 discipline in Section 1 is strict.
@@ -200,7 +197,7 @@ discipline in Section 1 is strict.
   legible without squinting, accents feel warm rather than glaring, and surfaces
   keep clear boundaries without stark contrast. If it glares, it fails.
 - **Native form controls** (`<select>`, `<input type="date">`, and similar) need
-  the `.satsang-native-control` class so their `color-scheme` follows the theme.
+  the `.app-native-control` class so their `color-scheme` follows the theme.
 - Do not read the theme during render to pick a color. Use the tokens and let the
   cascade do it. Read the resolved theme in an effect only when you must branch
   behavior (not color) on it.
@@ -246,7 +243,7 @@ for product surfaces defer to design-system Sections 8 and 12.
   reveal, gives feedback, or shows a state change. "It looked polished" is not a
   reason; the design system bans decorative motion outright. Cut anything you
   cannot justify in a sentence.
-- **Use the existing system.** The `satsang-*` keyframes, `animate-enter`,
+- **Use the existing system.** The `app-*` keyframes, `animate-enter`,
   `animate-breathe`, the duration and easing tokens, and `SectionReveal` /
   `BubbleReveal` cover the real needs. Reach for those before inventing anything.
 - **Reduced motion is mandatory.** `src/index.css` has a global
@@ -286,7 +283,7 @@ for product surfaces defer to design-system Sections 8 and 12.
   customization, in both themes.
 - **Focus rings.** The standard is
   `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-warmth focus-visible:ring-offset-2`,
-  and a global `.satsang-focus-ring` treatment exists in `src/index.css`. Do not
+  and a global `.app-focus-ring` treatment exists in `src/index.css`. Do not
   regress it; a component with its own focus style must stay at least as visible.
 - **Touch targets** at least 44px by 44px on every interactive element. The
   codebase has `h-10` (40px), `h-11` (44px), and `h-12` (48px); prefer `h-11` or
@@ -297,7 +294,7 @@ for product surfaces defer to design-system Sections 8 and 12.
   `Enter` submits, tab order follows visual order.
 - **Form fields** pass AA against their surface in both themes. Label above input,
   error below, never a placeholder as the label. Native controls carry
-  `.satsang-native-control`.
+  `.app-native-control`.
 - The mobile CI (`npm run test:mobile`) runs an axe-core accessibility pass
   (`@axe-core/playwright`), so a regression here fails a gate, not just a review.
 
@@ -306,7 +303,7 @@ for product surfaces defer to design-system Sections 8 and 12.
 Do not restate copy rules here, and do not let any wording from the original
 taste-skill override the house rules. Every visible string follows:
 
-- `docs/satsang-writing-style-guide.md` for marketing, articles, and long-form:
+- `docs/writing-style-guide.md` for marketing, articles, and long-form:
   the 15 AI-tell bans, the app-wide em-dash ban, the colon-drama ban, and the
   required behaviors. Run its checks on any copy you write.
 - Section 2 of the design system for in-product UI microcopy: greetings, guidance,
@@ -331,8 +328,8 @@ Tick every box that applies. If one fails honestly, it is not done.
       solid decorative gradient.
 - [ ] Works in **both** themes. Evening tested at ~20% brightness in a dark room:
       legible, warm not glaring, surfaces bounded. Native controls carry
-      `.satsang-native-control`.
-- [ ] No Motion, Framer, or GSAP import. Animation uses the `satsang-*` keyframes,
+      `.app-native-control`.
+- [ ] No Motion, Framer, or GSAP import. Animation uses the `app-*` keyframes,
       `animate-enter` / `animate-breathe`, the motion tokens, and the reveal
       components. Reduced motion respected. No raw scroll listeners.
 - [ ] Theme and `prefers-reduced-motion` read in an effect, not during render.
@@ -347,16 +344,16 @@ Tick every box that applies. If one fails honestly, it is not done.
 - [ ] The design system's "Avoiding AI Artifacts" pre-ship checklist (Section 1)
       run: dashes grepped, strings read aloud, triads cut, colons checked, layout
       scanned, Voice Test applied.
-- [ ] Copy passes `docs/satsang-writing-style-guide.md` and design-system Section 2;
+- [ ] Copy passes `docs/writing-style-guide.md` and design-system Section 2;
       dash scan clean (`rg -n "—|–" src public`).
 - [ ] `npm run typecheck` and `npm run build` pass. `npm run test:mobile` (including
       the axe-core pass) is green if the change shipped user-facing UI.
 
 ## 11. How this fits the other skills and the workflow
 
-- `docs/satsang-design-system.md` is the authority; this skill operationalizes it
+- `docs/design-system.md` is the authority; this skill operationalizes it
   and adds the anti-slop workflow. When in doubt, open the doc.
-- `docs/satsang-writing-style-guide.md` and `content-rigor` govern the words and
+- `docs/writing-style-guide.md` and `content-rigor` govern the words and
   their truth. `adversarial-review` governs whether the surface makes its case. The
   behavior harness and evals govern what the AI says. This skill governs whether the
   UI is inside the design language and off the tells.
@@ -366,14 +363,14 @@ Tick every box that applies. If one fails honestly, it is not done.
   mobile and admin visual QA notes, and the `scripts/visual-sweep.mjs` and
   `scripts/admin-visual-sweep.mjs` sweeps. Read them for continuity.
 - The house workflow is unchanged. Push to the feature branch, confirm the Vercel
-  preview reaches READY, share the URL, and let David QA before anything reaches
+  preview reaches READY, share the URL, and let the maintainer QA before anything reaches
   `main`. Never self-merge.
 
 ## Attribution
 
 Rebuilt for this repo from the open-source taste-skill
 (github.com/Leonxlnx/taste-skill, MIT). This is a derivative tailored to the
-Satsang "Quiet Authority" design system and brand. It is not a verbatim copy: the
+app's "Quiet Authority" design system and brand. It is not a verbatim copy: the
 design-system-selection map, the palette rotation, and the Next.js, RSC, and GSAP
 material from the original were dropped as not applicable, and several of the
 original's hard bans (serif for display, and loading fonts from Google Fonts) are

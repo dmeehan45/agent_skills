@@ -1,24 +1,31 @@
 ---
 name: content-rigor
 description: >-
-  Research, sourcing, and evidence guardrails for authored user-facing content
-  on Satsang: articles and moment scripts, marketing and comparison-page copy,
-  the glossary, quiz copy, emails, image alt text, and meta descriptions. Use
-  when drafting, editing, or reviewing a piece for whether its claims are true,
-  traceable, and earned, not just well written. Matters double here because the
-  product makes developmental, neuroscience, clinical, competitive, and privacy
-  claims to vulnerable parents, and the repo has no separate research standard
-  yet, so this skill carries the sourcing bar. Runs in two modes, write and
-  review. Anchors voice to docs/satsang-writing-style-guide.md. NOT for the AI's
-  live conversational output (that is the behavior harness and evals) and not
-  for UI (docs/satsang-design-system.md and frontend-polish).
+  Research, sourcing, and evidence guardrails for authored user-facing content:
+  articles and moment scripts, marketing and comparison-page copy, the glossary,
+  quiz copy, emails, image alt text, and meta descriptions. Use when drafting,
+  editing, or reviewing a piece for whether its claims are true, traceable, and
+  earned, not just well written. Matters double when the product makes
+  developmental, neuroscience, clinical, competitive, and privacy claims to
+  vulnerable parents and the repo has no separate research standard yet, so this
+  skill carries the sourcing bar. Runs in two modes, write and review. Anchors
+  voice to docs/writing-style-guide.md. NOT for the AI's live conversational
+  output (that is the behavior harness and evals) and not for UI
+  (docs/design-system.md and frontend-polish).
 ---
 
-# Content rigor (Satsang)
+# Content rigor
 
 This skill is the workflow for holding every piece of authored content to a
 research and rigor bar: how to research and draft a piece so it clears the bar,
 and how to review a piece against the bar and report what fails.
+
+> Written against a reference implementation — a content-driven TypeScript SPA
+> where articles and "moment scripts" are authored as JSON and seeded into a
+> database, marketing copy resolves through an i18n catalog, and the live
+> conversational AI is governed separately by an eval "harness". The file paths,
+> table names, command names, and sibling-doc references below are examples from
+> that implementation — map them to the equivalents in your own codebase.
 
 The spine is one rule. Traceability. Every non-obvious claim resolves to
 something the reader can check: a named primary source, a real number with its
@@ -28,8 +35,8 @@ exists to catch.
 
 **Read this next, because it changes how you use the skill.** In the codebase
 this skill was ported from, the sourcing standard lived in a separate document
-and this skill only operationalized it. Satsang has no such document. It has a
-strong voice standard (`docs/satsang-writing-style-guide.md`) but no
+and this skill only operationalized it. The app has no such document. It has a
+strong voice standard (`docs/writing-style-guide.md`) but no
 research-standards, source-tier, or citation document, and the clinical-review
 gate that would enforce sourcing on authored content exists only as an admin
 stub that is "a future gate and is not currently enforced". Meanwhile the live
@@ -70,8 +77,8 @@ already governs.
   alt text.
 
 **This skill defers:**
-- Voice, punctuation, and the AI-tell bans, to `docs/satsang-writing-style-guide.md`
-  (marketing, articles, long-form) and Section 2 of `docs/satsang-design-system.md`
+- Voice, punctuation, and the AI-tell bans, to `docs/writing-style-guide.md`
+  (marketing, articles, long-form) and Section 2 of `docs/design-system.md`
   (in-product UI microcopy). This skill governs whether a claim is true and
   sourced; the writing guide governs whether the line is on-voice. A piece usually
   needs both.
@@ -86,7 +93,7 @@ already governs.
   enforcement, to `docs/safety/trust-and-safety.md` and the safety-policy console.
   This skill flags when authored content crosses a safety line; the safety stack
   owns runtime.
-- UI, layout, and imagery, to `docs/satsang-design-system.md` and `frontend-polish`.
+- UI, layout, and imagery, to `docs/design-system.md` and `frontend-polish`.
 
 ## 1. The one test, the source tiers, and the claim classes that bite here
 
@@ -188,7 +195,7 @@ unsourced clinical claim because it is short.
    tells, concrete nouns (bedtime, meltdown, sibling fight, script) over abstraction,
    verbs that show work (remember, surface, draft, replay), say it once, show the
    behavior instead of asserting the quality, lead with what the parent gets. The
-   full list is in `docs/satsang-writing-style-guide.md`.
+   full list is in `docs/writing-style-guide.md`.
 5. **Cite and attribute as you write.** Attach each load-bearing claim to its
    source at the claim, with the date or edition you checked. Attribute ideas and
    coinages by name (and verify the attribution). For an article, put the sourcing
@@ -317,10 +324,10 @@ Tick every box that applies, and if one fails honestly, it is not done.
 
 ## 7. How this fits the other skills and the workflow
 
-- `docs/satsang-writing-style-guide.md` governs voice; this skill governs the words
+- `docs/writing-style-guide.md` governs voice; this skill governs the words
   and their sourcing. A piece usually wants both, and the two are complementary: the
   guide makes the line sound right, this skill makes it true.
-- `frontend-polish` and `docs/satsang-design-system.md` govern the UI a piece sits
+- `frontend-polish` and `docs/design-system.md` govern the UI a piece sits
   in.
 - The behavior harness and the eval loop (`change-pass`, `eval-changeset`,
   `docs/governance/`, the safety stack) govern the AI's live output. If a "fix" would
@@ -330,7 +337,7 @@ Tick every box that applies, and if one fails honestly, it is not done.
   engine's output must clear before it becomes copy.
 - `adversarial-review` sits above this skill and flags that a claim is unproven to
   the reader; it routes the sourcing fix here.
-- **Recommendation, worth raising with David.** Because the sourcing bar currently
+- **Recommendation, worth raising with the maintainer.** Because the sourcing bar currently
   lives only in this skill, two follow-ups would harden it: promote section 1 into a
   standing `docs/research-standards.md` that this skill and `CLAUDE.md` both point at,
   and wire the admin clinical-review gate (`src/pages/admin/guidance/ReviewsPage.tsx`,

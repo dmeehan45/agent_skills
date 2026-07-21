@@ -14,16 +14,23 @@ description: >-
   placeholder English), runs the parity audit, and verifies nothing was
   dropped. Not for harness/prompt copy (that is the change-pass loop), not for
   articles or moment scripts (content-rigor), and not for copy quality in
-  English (docs/satsang-writing-style-guide.md owns voice; this skill owns
-  completeness and propagation). Repo: dmeehan45/satsang-dev.
+  English (docs/writing-style-guide.md owns voice; this skill owns
+  completeness and propagation).
 ---
 
-# i18n propagation (Satsang / Avani)
+# i18n propagation
 
 Every translatable string lives in one English catalog and nine translated
 mirrors. The English side is guarded by the type system; the translated side is
 guarded by **nothing**. This skill is the missing guard: when copy changes, it
 carries the change into every locale and proves parity before the push.
+
+> Written against a reference implementation — a TypeScript SPA with a flat
+> i18n catalog: one English source-of-truth file typed as the key set, plus
+> nine translated locale catalogs typed as partials (so a missing key silently
+> falls back to English), assembled at runtime, with contract tests. The file
+> paths, locale codes, key counts, and command names below are examples from
+> that implementation — map them to the equivalents in your own codebase.
 
 **When to invoke.** Any diff that touches `src/lib/i18n/keys.ts` or
 `src/lib/i18n/translations/*.ts`; any new user-facing string on a translated
@@ -75,8 +82,8 @@ for(const loc of ['zh','hi','es','ar','fr','bn','pt','ru','id']){
 }"
 ```
 
-Success is `missing: 0, orphans: 0` for all nine locales — or a gap David has
-explicitly accepted, named in your reply. Never report parity you did not run.
+Success is `missing: 0, orphans: 0` for all nine locales — or a gap the
+maintainer has explicitly accepted, named in your reply. Never report parity you did not run.
 (Note the regex reads keys line-by-line; it assumes the house one-key-per-line
 format. If a catalog was reformatted, eyeball-verify before trusting a zero.)
 
@@ -85,7 +92,7 @@ format. If a catalog was reformatted, eyeball-verify before trusting a zero.)
 1. **English first.** Add or edit the key in `keys.ts`, inside the right
    `// — Section —` comment group (the file is grouped by surface, not
    alphabetical — match that). English copy follows
-   `docs/satsang-writing-style-guide.md`; the em-dash ban and voice rules apply
+   `docs/writing-style-guide.md`; the em-dash ban and voice rules apply
    to the **English** catalog. Keep any price or offer strings in sync with
    their mirrors (`src/lib/seo.ts`, `scripts/prerender-articles.mjs`, the
    docs) — `tests/offer-consistency.contract.test.mjs` guards some of this,
@@ -98,7 +105,7 @@ format. If a catalog was reformatted, eyeball-verify before trusting a zero.)
    dash, Chinese uses full-width punctuation, Arabic reads RTL — do not
    "fix" those to English conventions, and do not apply the English em-dash
    ban to languages whose typography requires one). Keep untranslatables
-   untranslated: the product name **Avani**, the price **$24.99**, person
+   untranslated: the product name, the price **$24.99**, person
    names.
 3. **Editing an existing English string?** Decide per key whether the meaning
    changed. A meaning change means all nine translations must be re-rendered,
@@ -113,8 +120,8 @@ format. If a catalog was reformatted, eyeball-verify before trusting a zero.)
    the old key's usages in `src/` first.
 
 These files were AI-draft translated at launch ("pending native review" per the
-file headers). Keep that header comment intact; if David has had a locale
-natively reviewed, do not churn its existing strings without being asked.
+file headers). Keep that header comment intact; if the maintainer has had a
+locale natively reviewed, do not churn its existing strings without being asked.
 
 ## 4. Verify
 
@@ -125,7 +132,7 @@ natively reviewed, do not churn its existing strings without being asked.
   (`start-page-copy`, `ui-copy`, `offer-consistency`) touch these files.
 - Spot-render at least one changed locale and the RTL one if you touched
   shared layout copy: `npm run dev`, switch locale via the globe control
-  (persisted under localStorage key `satsang_locale`), and look at the
+  (persisted under a localStorage key such as `app_locale`), and look at the
   changed surface. For Arabic confirm direction still renders correctly.
 - Bundle sanity: all nine catalogs are **eagerly imported** at boot via
   `translations.ts` → `I18nProvider` (a known P1 in the 2026-06-05 QA sweep).
@@ -143,8 +150,8 @@ natively reviewed, do not churn its existing strings without being asked.
 - Never translate brand names, prices, or `{placeholders}` / interpolation
   tokens if a string contains them — carry them through verbatim.
 - Do not add a translation-completeness test to `tests/` as a side effect;
-  that is a real improvement but it changes CI behavior — propose it to David
-  separately.
+  that is a real improvement but it changes CI behavior — propose it to the
+  maintainer separately.
 
 ## 6. Preflight before you hand back
 
