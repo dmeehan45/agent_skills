@@ -281,8 +281,11 @@ else
   echo "fallback-blob-walk" > "$OUT/inventory/history-scan-status.txt"
   # Distinct blobs reachable from any ref, newest refs first. Deduplicated by
   # SHA so a file unchanged across 500 commits is scanned once.
+  # rev-list --objects emits "<sha> <path>", and paths contain spaces. Take
+  # everything after the first field as the path, not just field 2.
   git -C "$REPO" rev-list --objects --all 2>/dev/null \
-    | awk 'NF>1 {print $1"\t"$2}' | sort -u -k1,1 > "$INV/history-blobs.txt"
+    | awk 'NF>1 {sha=$1; $1=""; sub(/^[ \t]+/, ""); print sha"\t"$0}' \
+    | sort -u -k1,1 > "$INV/history-blobs.txt"
   blob_count=0
   while IFS=$'\t' read -r sha path; do
     [ -z "${sha:-}" ] && continue
