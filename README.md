@@ -67,6 +67,7 @@ and other agents that support it.
 | [`adversarial-review`](skills/adversarial-review/) | Pressure-test a product or marketing surface by role-playing your toughest critics, then fix the worst gaps. |
 | [`qa-sweep`](skills/qa-sweep/) | Run a scoped QA pass over the product and file prioritized findings (P0–P3) with evidence. It reports; it doesn't fix. |
 | [`handoff-audit`](skills/handoff-audit/) | A full codebase health check that flags dead code, tech debt, and what breaks at scale — as a report, before anything gets deleted. |
+| [`public-release-prep`](skills/public-release-prep/) | Get an old private repo ready to go public: scan the code *and* its whole git history for secrets and private material, sort out ownership and licensing, make sure it actually runs for a stranger, and rewrite the README. It never publishes anything itself. |
 
 ### Engineering & operations
 | Skill | What it does |
