@@ -1,25 +1,21 @@
 ---
 name: public-release-prep
 description: >-
-  Prepare a private repository for public release as a functional, forkable
-  reference project — audit first, clean up only after the owner approves.
-  Use when asked to open-source a repo, make a private repo public, "share
-  this old project on my GitHub", turn past project work into a public
-  template or portfolio piece, sanitize a repo before publishing, check
-  whether a repo is safe to open-source, scrub secrets and internal material
-  before going public, or write the README and pick a license for a first
-  public release. It scans the working tree AND all reachable git history for
-  credentials, personal data, client or employer material, and third-party
-  assets; treats ownership and licensing as publication gates rather than
-  findings; verifies the project actually installs, builds, tests, and runs
-  from a clean checkout and repairs what is broken; rewrites the README
-  honestly in the owner's voice; and recommends whether to sanitize existing
-  history, export a fresh-history snapshot, or stay private. It never
-  publishes, never changes repository visibility, never pushes or force-pushes,
-  never rewrites history, and never rotates credentials — it hands back the
-  exact commands for the owner to run. Not a general code-health report
-  (handoff-audit), not a product QA pass (qa-sweep), not a single-diff review
-  (/code-review or /security-review).
+  Audit and prepare a private repo for public release — secrets, ownership,
+  licensing, docs, and whether it still runs — cleaning up only after the
+  owner approves. Use whenever someone wants to open-source a repo, make a
+  private repo public, publish an old project on their GitHub, or turn past
+  work into a public template or portfolio piece. Also for phrasings like
+  "clean this up before I put it on github", "is it safe to make this
+  public", "make sure there's nothing in here that shouldn't be seen", or
+  "scrub the client name out of this repo". Reach for it even when the repo
+  looks small or the ask sounds like a quick tidy-up: the harmful material
+  is usually in git history, not the working tree. Scans all reachable
+  history — branches, tags, deleted files, LFS — treats ownership and
+  licensing as publication gates, verifies a clean-checkout
+  install/build/test, and rewrites the README. Never publishes, pushes,
+  rewrites history, or rotates credentials. Not handoff-audit, qa-sweep, or
+  /code-review.
 ---
 
 # Preparing a private repo to go public
