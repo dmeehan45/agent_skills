@@ -6,7 +6,7 @@ screenshots. Measurement is what makes the extraction faithful; inference is
 what produces plausible-but-wrong tokens.
 
 ```bash
-SKILL=skills/public-site-design-system-modernizer/scripts
+SKILL=skills/design-system-extractor/scripts
 OUT=design-system-output
 
 # 1. discover — robots.txt, sitemap, template classification, sample selection
