@@ -13,7 +13,8 @@ ALLOWED_AUDIENCES = {"designer", "developer", "both"}
 ALLOWED_INTENDED_USE = {"internal_exploration", "client_work", "rebuild_baseline"}
 ALLOWED_CRAWL_MODES = {"representative_sample", "bounded_full", "custom_urls", "sitemap"}
 ALLOWED_FALLBACKS = {"suggest_candidates", "mark_unknown", "infer_ranges"}
-DEFAULT_EXCLUDE_HINTS = {"/legal", "/privacy", "/terms", "/careers", "/login"}
+ALLOWED_FIDELITY_MODES = {"modernized", "verbatim"}
+DEFAULT_EXCLUDE_HINTS = {"/careers", "/login"}
 
 
 def load_json(path: str) -> Any:
@@ -110,8 +111,21 @@ def validate_scope(cfg: dict[str, Any], errors: list[str], warnings: list[str]) 
             add_warn(
                 warnings,
                 "scope.exclude_paths",
-                "does not include common low-value paths (/legal,/privacy,/terms,/careers,/login)",
+                "does not include common low-value paths (/careers,/login)",
             )
+        legal_paths = {"/legal", "/privacy", "/terms"} & set(exclude_paths)
+        if legal_paths and not scope.get("typography_only_paths"):
+            add_warn(
+                warnings,
+                "scope.exclude_paths",
+                f"excluding {sorted(legal_paths)} entirely discards the site's cleanest body-copy and "
+                "link-styling evidence; prefer scope.typography_only_paths so they inform type but not voice",
+            )
+        typography_only = scope.get("typography_only_paths")
+        if typography_only is not None and (
+            not isinstance(typography_only, list) or not all(isinstance(x, str) for x in typography_only)
+        ):
+            add_error(errors, "scope.typography_only_paths", "must be a list of strings if provided")
 
     if crawl_mode == "custom_urls":
         urls = scope.get("custom_urls")
@@ -158,6 +172,32 @@ def validate_capture(cfg: dict[str, Any], errors: list[str], warnings: list[str]
     if capture.get("text") is False:
         add_warn(warnings, "capture.text", "disabling text reduces voice DNA extraction quality")
 
+    # Measurement passes. Without these the pipeline falls back to inference,
+    # which is what produces plausible-but-wrong tokens.
+    for key in ("computed_styles", "interaction_states", "dark_mode", "consent_dismissal"):
+        if key in capture and not isinstance(capture[key], bool):
+            add_error(errors, f"capture.{key}", "must be boolean if provided")
+    if capture.get("computed_styles") is False:
+        add_error(
+            errors,
+            "capture.computed_styles",
+            "must be true: without a computed-style census every token is inferred rather than measured",
+        )
+    if capture.get("interaction_states") is False:
+        add_warn(
+            warnings,
+            "capture.interaction_states",
+            "hover/focus/active cannot be observed without this pass; component states become recommendations",
+        )
+    if capture.get("dark_mode") is False:
+        add_warn(warnings, "capture.dark_mode", "no dark-mode pass; emitted tokens will be light-only")
+    if capture.get("consent_dismissal") is False:
+        add_warn(
+            warnings,
+            "capture.consent_dismissal",
+            "cookie banners obscure components and skew screenshot-derived colour measurements",
+        )
+
 
 def validate_quality(cfg: dict[str, Any], errors: list[str], warnings: list[str]) -> None:
     quality = cfg.get("quality")
@@ -184,8 +224,21 @@ def validate_quality(cfg: dict[str, Any], errors: list[str], warnings: list[str]
     if fallback not in ALLOWED_FALLBACKS:
         add_error(errors, "quality.low_confidence_fallback", f"must be one of {sorted(ALLOWED_FALLBACKS)}")
 
+    fidelity_mode = quality.get("fidelity_mode")
+    if fidelity_mode is not None and fidelity_mode not in ALLOWED_FIDELITY_MODES:
+        add_error(errors, "quality.fidelity_mode", f"must be one of {sorted(ALLOWED_FIDELITY_MODES)}")
+
     for key in ("require_contrast_checks", "require_anti_pattern_report", "require_pnie_matrix"):
         expect_bool(quality, key, "quality", errors)
+    for key in ("require_fidelity_check", "require_raw_vs_canonical_diff"):
+        if key in quality and not isinstance(quality[key], bool):
+            add_error(errors, f"quality.{key}", "must be boolean if provided")
+    if quality.get("require_fidelity_check") is False:
+        add_warn(
+            warnings,
+            "quality.require_fidelity_check",
+            "skipping the round-trip check means nothing verifies the tokens actually match the source",
+        )
 
 
 def validate_guardrails(cfg: dict[str, Any], errors: list[str]) -> None:

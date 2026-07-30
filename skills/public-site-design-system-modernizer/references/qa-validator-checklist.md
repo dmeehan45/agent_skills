@@ -1,96 +1,138 @@
 # QA / Validator Checklist
 
-Run validator checks after synthesis and before packaging. Continue on partial failures, but mark degraded confidence.
+Run after synthesis, before handoff. Much of this is automated by
+`scripts/validate_output_package.py` — run it, then work the items it cannot
+check. Continue on partial failures but mark degraded confidence.
 
-## 1) Accessibility checks (mandatory)
+## 0) Measurement integrity (blocking)
 
-- Contrast:
-  - Flag risky foreground/background pairs
-  - Provide accessible alternatives that preserve color character
-- Focus states:
-  - Visible focus indicators for interactive controls
-  - Distinguishable from hover-only styles
-- Status communication:
-  - Do not rely on color alone
-- Touch targets:
-  - Minimum target guidance for mobile controls
-- Readability:
-  - Text sizes/line heights for dense views
-- Forms:
-  - Labels, helper text, error messages, and validation clarity
-- Keyboard:
-  - Notes on navigability expectations where inferable
-- Motion:
-  - Reduced-motion guidance if motion tokens are present
+Before anything else, confirm the package is measured rather than inferred.
+`validate_output_package.py` fails if any of these is missing:
 
-## 2) Token consistency checks
+- `evidence/crawl-manifest.json`, `evidence/measured-raw.json`
+- `evidence/extraction-confidence.json` with a `model.formula`
+- `evidence/contrast-findings.json`, `evidence/component-observations.json`
+- `evidence/raw-vs-canonical-diff.md`
+- `tokens/tokens.source.json`, `tokens.json`, `tokens.css`, both Tailwind files,
+  `preview.html`
+- `components/component-contracts.json`
 
-- Canonical token names are consistent across reports/JSON/CSS/Tailwind
-- No contradictory values for the same token
-- Accidental variants are not elevated to canonical without evidence
-- Low-confidence tokens are labeled and handled by fallback policy
-- Breakpoints/container widths follow a coherent system (not page-by-page drift)
+A missing artifact means a stage did not run. Re-run it — do not backfill by
+hand, and do not use `--allow-unmeasured` for a handoff package.
 
-## 3) Component completeness checks
+Also check: `pages_measured >= 1`; every page has screenshots; consent was
+dismissed where a banner exists (`captures.<viewport>_consent.dismissed`).
 
-For each core component in scope, confirm:
+## 1) Fidelity (blocking)
 
-- Purpose
-- Anatomy
-- Variants
-- States: `default`, `hover`, `focus`, `active`, `disabled`
-- States when applicable: `loading`, `error`, `selected`, `empty`
-- Spacing rules
-- Content guidance
-- Accessibility notes
-- Implementation notes
+From `evidence/fidelity-report.json`:
 
-Flag missing state guidance instead of silently omitting it.
+- Mean palette ΔE **≤ 0.03** high, **≤ 0.07** moderate, **> 0.07 fails**.
+- Dominant pixel share covered ≥ 75%; below that, a surface colour is probably
+  missing or imagery dominates the page.
+- Component comparisons: dominant ΔE near zero for the primary button and input.
+  A large delta means the component token layer is not resolving to what the
+  site renders.
 
-## 4) Over-literal copying risk checks (mandatory)
+If fidelity is low, the fault is usually colour role assignment, not the
+palette. Check `evidence/measured-raw.json` role breakdowns before touching
+anything else.
+
+Confidence and fidelity are independent. A run can be confident and unfaithful —
+consistently measuring a cookie banner scores high on coverage. Read both.
+
+## 2) Accessibility
+
+- **Contrast** — every failing pair in `contrast-findings.json` has an
+  `accessible_alternative`. Alternatives move OKLCH lightness only, holding hue
+  and chroma, so brand character survives. Verify thresholds used the real font
+  size and weight (3.0 for large text, 4.5 otherwise).
+- **Focus** — `has_visible_focus_indicator` true for every interactive contract.
+  A measured UA default (`outline: 1px auto`) means the site never styled its
+  ring: a real finding and an improvement opportunity, not missing data. Build
+  rings from `focus_visible`, not `focus`.
+- **Touch targets** — `meets_44px_touch_target` on interactive contracts; flag
+  and recommend where measured height falls short.
+- **Status communication** — never colour alone.
+- **Readability** — text sizes and line heights for dense views.
+- **Forms** — labels, helper text, error messages, validation clarity.
+- **Keyboard** — navigability notes where inferable.
+- **Motion** — reduced-motion guidance whenever motion tokens exist. Durations
+  are measured, so "no motion system" must mean the census found none.
+
+## 3) Token consistency
+
+- Names match across `tokens.json`, `tokens.css`, both Tailwind files, and the
+  reports.
+- No contradictory values for one token.
+- The three layers are intact: primitives are raw, semantics alias primitives,
+  component tokens alias semantics. No component token holding a literal.
+- Dark mode overrides the semantic layer only. If the source has dark mode,
+  `dark-mode.json.supported` must be true and `tokens.css` must carry both the
+  media query and the `[data-theme="dark"]` block.
+- Low-confidence tokens are labelled in all three places (JSON status, CSS
+  comment, confidence report) — never silently promoted or dropped.
+- Breakpoints came from the site's own `@media` rules, not convention.
+
+## 4) Component completeness
+
+Per `component-contract-schema.md`:
+
+- Purpose, anatomy, variants, spacing, content guidance, accessibility,
+  implementation notes.
+- States `default`, `hover`, `focus-visible`, `active`, `disabled`; plus
+  `loading`, `error`, `selected`, `empty` where applicable.
+- **Every state carries `source: measured | recommended`.** Untagged states fail
+  validation. Anything in `unmeasured_states` is design work and must be
+  presented that way in the narrative spec too.
+- The narrative spec did not overwrite `base`, `states[].changes`, `evidence`,
+  or `unmeasured_states`.
+
+Flag missing state guidance; never silently omit it.
+
+## 5) Normalization honesty
+
+- `raw-vs-canonical-diff.md` exists, names the fidelity mode, and lists every
+  change with a rationale.
+- No normalization happened that is absent from the diff.
+- `measured-raw.json` still holds the complete unmodified observations.
+- The PNIE matrix cross-references the diff.
+- No normalized value is presented anywhere as an observation.
+
+## 6) Over-literal copying (blocking)
 
 Flag and revise if outputs:
 
-- Mirror exact page layouts from the source
-- Encode one-off campaign styles as canonical
-- Reuse copyrighted asset content without rights confirmation
-- Use exact source copy blocks as reusable component content guidance
+- mirror exact source page layouts
+- encode one-off campaign styling as canonical
+- reuse copyrighted assets without rights confirmation — measured logo
+  *colours* are brand facts and fine; the logo *artwork* is not
+- reuse source copy blocks as reusable component content guidance
 
-Require explicit non-derivative guidance in final outputs:
+Require explicit non-derivative language: what to preserve, what to
+normalize/improve, what not to copy.
 
-- what to preserve
-- what to normalize/improve
-- what not to copy directly
+## 7) Confidence
 
-## 5) Confidence checks
+- Every weak-evidence area marked.
+- Threshold applied consistently; fallback behaviour consistent.
+- Evidence page ids exist for material claims.
+- No hand-edited confidence scores — they are computed from
+  `confidence-model.md`.
 
-- Every weak-evidence area is marked
-- Confidence threshold applied to canonical token decisions
-- Fallback behavior is consistent (`suggest_candidates`, `mark_unknown`, `infer_ranges`)
-- Evidence references exist for material claims
+## 8) Degraded runs
 
-## 6) Failure handling / degraded mode
+Handle and report, do not paper over: robots restrictions, timeouts,
+cross-origin stylesheets (`cssom.sheets_blocked`), JS-heavy pages with thin
+capture, redirect loops, low-signal pages, blocked assets, sparse component
+evidence, bot protection.
 
-Handle and report clearly:
+Continue when partial evidence suffices, lower confidence, name the blind spots,
+and provide fallbacks. Never fabricate a value to fill a gap.
 
-- `robots.txt` restrictions
-- timeouts / network failures
-- JS-heavy pages with incomplete capture
-- duplicate/redirect loops
-- low-signal pages
-- missing CSS / blocked assets
-- sparse component evidence
-
-Behavior:
-
-- Continue when partial evidence is sufficient
-- Lower confidence and explain blind spots
-- Provide fallback outputs instead of fabricating exact values
-
-## QA output recommendations
-
-Generate:
+## Outputs
 
 - `reports/accessibility-audit.md`
-- `evidence/extraction-confidence.json`
-- validator findings summary embedded in Executive Summary and Source Audit
+- `reports/fidelity-check.md` (generated)
+- `evidence/extraction-confidence.json` (generated)
+- Validator findings summarised in the Executive Summary and Source Audit

@@ -1,131 +1,116 @@
 # Wizard and Config
 
-Use this checklist to collect inputs and build a normalized config object for reproducible runs.
+Collect these inputs, build a normalized config, validate it with
+`scripts/validate_intake_config.py`, and show the run plan before crawling.
 
-## 1) Project Intent (fixed mode)
+Most fields have a working default. Ask for the source URL and the fidelity
+mode; infer the rest and show them in the run plan for correction rather than
+interrogating the user field by field.
 
-Collect:
+## 1) Project intent
 
 - `project_name`
-- `source_url` (public URL)
+- `source_url` — public http(s) URL
 - `output_audience`: `designer` | `developer` | `both`
 - `intended_use`: `internal_exploration` | `client_work` | `rebuild_baseline`
 
-Enforce:
+`mode` is always `brand_faithful_modernization`. Warn that outputs are
+site-inspired and normalized, not clones.
 
-- `mode` is always `brand_faithful_modernization`
-- Show warning: outputs are site-inspired + normalized, not clones
+## 2) Crawl scope
 
-## 2) Crawl Scope (public web only)
+Modes: `representative_sample` (default), `bounded_full`, `custom_urls`,
+`sitemap`.
 
-Supported modes:
+- `max_pages`, `max_depth`, `include_subdomains`
+- `exclude_paths`, `typography_only_paths`
+- `respect_robots_txt` (default true)
+- `crawl_delay_ms`, `requests_per_second`
+- `custom_urls` / `sitemap_url` when the mode requires them
 
-- `representative_sample` (default, recommended)
-- `bounded_full`
-- `custom_urls`
-- `sitemap`
+`discover_urls.py` implements this: it reads robots.txt, follows declared
+sitemaps, classifies templates, and round-robins across template buckets so
+coverage beats depth.
 
-Collect:
+**Default excludes:** `/careers`, `/login`, plus auth, cart/checkout, feeds, and
+binary assets (built into the discovery script).
 
-- `max_pages` (int)
-- `max_depth` (int)
-- `include_subdomains` (bool)
-- `exclude_paths` (list; include common defaults)
-- `respect_robots_txt` (bool, default true)
-- `crawl_delay_ms` (int)
-- `requests_per_second` (number)
-- `custom_urls` (list; only when mode is `custom_urls`)
-- `sitemap_url` (string; only when mode is `sitemap`)
+**Typography-only paths:** `/legal`, `/privacy`, `/terms`, `/cookie`,
+`/accessibility`. Excluded by default; add `--include-typography-only` to
+capture them. They hold the site's cleanest long-form body copy and link styling
+with no marketing noise — good typography evidence, bad brand-voice evidence.
+Never let them influence tone extraction.
 
-Default exclude suggestions:
+**Target templates**, in priority order: home, pricing, feature/product, docs,
+contact/form, article, case study, catalog, help, about.
 
-- `/legal`
-- `/privacy`
-- `/terms`
-- `/careers`
-- `/login`
+## 3) Public-site guardrails
 
-Representative sample target templates (bias for diversity over count):
+Require:
 
-- home
-- feature/product
-- pricing
-- docs/help
-- blog/article (optional)
-- contact/sales
-- form/workflow
-- public app-like page (if available)
+- `public_access_confirmed`
+- `non_clone_intent_confirmed`
+- `asset_rights_warning_confirmed`
 
-## 3) Public Website Guardrails (explicit confirmations)
+Never support: authenticated crawling, credential entry, private route probing,
+access-control bypass, or spoofing identity to evade bot protection. If a site
+blocks the crawler, report it and reduce scope.
 
-Require confirmations:
+## 4) Capture settings
 
-- `public_access_confirmed` = true
-- `non_clone_intent_confirmed` = true
-- `asset_rights_warning_confirmed` = true
+Screenshots: `desktop` (required), `mobile` (default true), `tablet` (default
+false).
 
-Never support in v1:
+Content capture: `html`, `css`, `text`, `asset_metadata`,
+`component_candidates` — all default true.
 
-- authenticated crawling
-- credential entry/capture
-- private route probing
-- access-control bypass attempts
+**Measurement passes** — these are what make the run an extraction rather than
+an inference:
 
-## 4) Capture / Extraction Settings
+| Field | Default | Effect when disabled |
+| --- | --- | --- |
+| `computed_styles` | `true` (enforced) | Every token becomes inferred. The validator rejects `false` |
+| `interaction_states` | `true` | Hover/focus/active unobservable; component states become recommendations |
+| `dark_mode` | `true` | Token set is light-only |
+| `consent_dismissal` | `true` | Cookie banners obscure components and skew pixel measurements |
 
-Collect:
+## 5) Output package
 
-- `screenshots.desktop` (required true)
-- `screenshots.mobile` (recommended default true)
-- `screenshots.tablet` (optional default false)
-- `capture.html` (default true)
-- `capture.css` (default true)
-- `capture.computed_css_samples` (optional if tooling supports)
-- `capture.text` (default true)
-- `capture.asset_metadata` (default true)
-- `capture.component_candidates` (default true)
+Full handoff package by default. `formats.markdown` and `formats.json` are
+required; `formats.yaml` optional.
 
-## 5) Output Package Selection
+Token emission always produces DTCG JSON, layered CSS, Tailwind v3 **and** v4,
+and `preview.html`. Emit both Tailwind formats — v3 and v4 configure themes in
+completely different places, and shipping one guesses the consumer's version.
 
-Defaults:
+## 6) Quality and confidence
 
-- Complete handoff package enabled
-- `formats.markdown = true`
-- `formats.json = true`
-- `formats.yaml = false` (optional)
+- `fidelity_mode`: `modernized` (default) | `verbatim` — see
+  `extraction-requirements.md` §4
+- `canonical_token_confidence_threshold` (default `0.70`) — see
+  `confidence-model.md`
+- `low_confidence_fallback`: `suggest_candidates` | `mark_unknown` |
+  `infer_ranges`
+- `require_contrast_checks`, `require_anti_pattern_report`,
+  `require_pnie_matrix` (default true)
+- `require_fidelity_check` (default true) — the round-trip verification; without
+  it nothing confirms the tokens match the source
+- `require_raw_vs_canonical_diff` (default true)
 
-Sections are enumerated in `output-package.md`.
+Confidence is computed, not asserted. Do not hand-edit scores.
 
-## 6) Quality and Confidence Controls
+## 7) Run plan preview (required before crawling)
 
-Collect:
+Show: selected URLs with template guesses, exclusions and why, crawl mode and
+limits, capture settings including which measurement passes are on, fidelity
+mode, output artifacts, warnings (JS-heavy pages, blocked stylesheets,
+third-party embeds, missing high-signal templates), and estimated workload
+(`fast` | `medium` | `heavy`).
 
-- `canonical_token_confidence_threshold` (default `0.70`)
-- `low_confidence_fallback`: `suggest_candidates` | `mark_unknown` | `infer_ranges`
-- `require_contrast_checks` (default true)
-- `require_anti_pattern_report` (default true)
-- `require_pnie_matrix` (default true)
+`render_run_plan.py` renders this from the config plus `crawl-plan.json`. Do not
+start capture until it has been shown.
 
-Enforce:
-
-- Label low-confidence claims
-- Do not invent exact token values when evidence is weak
-
-## 7) Run Plan Preview (required before execution)
-
-Show:
-
-- Candidate URLs / selected URLs
-- Included + excluded path rules
-- Crawl mode and limits
-- Capture settings
-- Output artifacts
-- Warnings (JS-heavy pages, sparse styles, third-party embeds)
-- Estimated workload class: `fast` | `medium` | `heavy`
-
-Do not execute crawl until this preview is shown.
-
-## Normalized Config Example
+## Normalized config example
 
 ```json
 {
@@ -138,10 +123,11 @@ Do not execute crawl until this preview is shown.
   },
   "scope": {
     "crawl_mode": "representative_sample",
-    "max_pages": 20,
+    "max_pages": 14,
     "max_depth": 3,
     "include_subdomains": false,
-    "exclude_paths": ["/legal", "/privacy", "/terms", "/careers", "/login"],
+    "exclude_paths": ["/careers", "/login"],
+    "typography_only_paths": ["/legal", "/privacy", "/terms"],
     "respect_robots_txt": true,
     "crawl_delay_ms": 500,
     "requests_per_second": 1
@@ -152,14 +138,26 @@ Do not execute crawl until this preview is shown.
     "css": true,
     "text": true,
     "asset_metadata": true,
-    "component_candidates": true
+    "component_candidates": true,
+    "computed_styles": true,
+    "interaction_states": true,
+    "dark_mode": true,
+    "consent_dismissal": true
   },
   "quality": {
+    "fidelity_mode": "modernized",
     "canonical_token_confidence_threshold": 0.7,
     "low_confidence_fallback": "suggest_candidates",
     "require_contrast_checks": true,
     "require_anti_pattern_report": true,
-    "require_pnie_matrix": true
+    "require_pnie_matrix": true,
+    "require_fidelity_check": true,
+    "require_raw_vs_canonical_diff": true
+  },
+  "guardrails": {
+    "public_access_confirmed": true,
+    "non_clone_intent_confirmed": true,
+    "asset_rights_warning_confirmed": true
   }
 }
 ```
