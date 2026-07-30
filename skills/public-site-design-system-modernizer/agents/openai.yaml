@@ -1,4 +1,4 @@
 interface:
   display_name: "Public Site Design System Modernizer"
-  short_description: "Analyze a public website and generate a brand-faithful modernized design system package (tokens, components, patterns, dev/designer handoff) without cloning source layouts."
-  default_prompt: "Create a brand-faithful modernized design system from this public website. Use a bounded representative crawl, extract visual/voice/component evidence, preserve brand character, normalize inconsistency, improve accessibility, and export the full markdown+JSON handoff package."
+  short_description: "Measure a public website in a real browser and emit a brand-faithful design system — DTCG tokens, layered CSS, Tailwind v3/v4 themes, and measured component contracts — verified by a round-trip fidelity check against the source pixels."
+  default_prompt: "Extract a brand-faithful design system from this public website. Run the measurement pipeline (discover, capture, aggregate, emit, fidelity check) rather than inferring values from markup, preserve brand character, normalize inconsistency, improve accessibility, and export the full handoff package with confidence and fidelity reporting."

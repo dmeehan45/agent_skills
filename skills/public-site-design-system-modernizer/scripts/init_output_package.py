@@ -7,22 +7,41 @@ import argparse
 from pathlib import Path
 
 
+# Files the pipeline scripts generate themselves. Scaffolding them as empty
+# placeholders would mask a stage that silently failed to run, so they are
+# listed here only for the directory tree and are never written.
+GENERATED_BY_PIPELINE = [
+    "tokens/tokens.json",
+    "tokens/tokens.css",
+    "tokens/tailwind.theme.js",
+    "tokens/tailwind.theme.css",
+    "tokens/tokens.source.json",
+    "tokens/preview.html",
+    "components/component-contracts.json",
+    "evidence/crawl-manifest.json",
+    "evidence/measured-raw.json",
+    "evidence/extraction-confidence.json",
+    "evidence/contrast-findings.json",
+    "evidence/component-observations.json",
+    "evidence/dark-mode.json",
+    "evidence/fidelity-report.json",
+    "evidence/raw-vs-canonical-diff.md",
+    "reports/fidelity-check.md",
+]
+
+# Narrative artifacts the synthesis prompts write. These get placeholders.
 REQUIRED_FILES = [
     "reports/executive-summary.md",
     "reports/source-audit.md",
     "reports/brand-dna.md",
     "reports/accessibility-audit.md",
     "reports/preserve-normalize-improve-exclude.md",
-    "tokens/tokens.json",
-    "tokens/tokens.css",
-    "tokens/tailwind.theme.js",
     "components/component-library-spec.md",
-    "components/component-contracts.json",
     "patterns/page-template-patterns.md",
-    "evidence/crawl-manifest.json",
     "evidence/page-weights.json",
-    "evidence/extraction-confidence.json",
 ]
+
+DIRECTORIES = ["reports", "tokens", "components", "patterns", "evidence", "evidence/pages", "evidence/screenshots"]
 
 
 PLACEHOLDERS = {
@@ -57,6 +76,9 @@ def main() -> int:
     args = parser.parse_args()
 
     root = Path(args.output_dir)
+    for directory in DIRECTORIES:
+        (root / directory).mkdir(parents=True, exist_ok=True)
+
     created = 0
     skipped = 0
     for rel in REQUIRED_FILES:
@@ -66,9 +88,11 @@ def main() -> int:
         else:
             skipped += 1
 
-    print(f"Scaffolded {created} files under {root}")
+    print(f"Scaffolded {created} placeholder file(s) and {len(DIRECTORIES)} directories under {root}")
     if skipped:
         print(f"Skipped {skipped} existing files (use --force to overwrite placeholders)")
+    print(f"{len(GENERATED_BY_PIPELINE)} further artifacts are written by the pipeline scripts, not scaffolded:")
+    print("  discover_urls.py -> capture_site.mjs -> aggregate_tokens.py -> emit_tokens.py -> fidelity_check.mjs")
     return 0
 
 

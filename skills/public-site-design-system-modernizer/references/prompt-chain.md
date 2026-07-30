@@ -1,155 +1,163 @@
 # Prompt Chain (A/B/C)
 
-Use at least these three prompts. Keep inputs structured and include evidence references (page IDs, cluster IDs, screenshot IDs, CSS frequency tables).
+The prompts run **after** the measurement pipeline, over its JSON output. They
+interpret measurements; they do not produce them. Never ask a prompt to estimate
+a value that `aggregate_tokens.py` already measured — that is how a faithful
+extraction turns back into a plausible guess.
 
 ## Shared conventions
 
-- Provide `config`, `clusters`, `page_weights`, `capture_manifest`, and validator findings as JSON when possible.
-- Attach only representative screenshots; do not overload prompts.
-- Use confidence scores in `[0,1]`.
-- Cite evidence by IDs, not long prose.
+- Feed the generated JSON, not raw HTML or CSS: `measured-raw.json`,
+  `tokens.source.json`, `extraction-confidence.json`, `contrast-findings.json`,
+  `component-observations.json`, `dark-mode.json`, `fidelity-report.json`,
+  `crawl-manifest.json`.
+- Attach a few representative screenshots. Do not attach all of them.
+- Cite evidence by `page_id` and token name, not prose.
+- Confidence scores are inputs, never outputs. A prompt may not invent, adjust,
+  or round one.
+- Any value not present in the measurements must be labelled a recommendation.
 
-## Prompt A: Evidence Extraction Report (Grounded, Extractive)
+## Prompt A — Evidence Interpretation Report
 
-Purpose:
+**Purpose:** turn measurements into weighted, human-readable observations
+without making canonical decisions.
 
-- Produce weighted observations and candidate signals without making final canonical design decisions.
+**Input:** `measured-raw.json`, `crawl-manifest.json`,
+`extraction-confidence.json`, `component-observations.json`, sample screenshots.
 
-Input:
+**Output:**
 
-- Structured crawl data
-- Screenshot samples
-- CSS frequency tables / computed style samples (if available)
-- Text samples
-- Template clusters + page weights
+1. Weighted observations by template cluster
+2. What the site declares about itself — `:root` custom properties, theme-color,
+   logo colours, `@media` breakpoints — and where measured usage diverges from
+   the declaration
+3. Visual observations per category: observed variants, accidental variants,
+   measured confidence
+4. Verbal/voice candidates: tone, CTA style, messaging hierarchy, vocabulary
+   (excluding `typography_only` pages)
+5. Component inventory with measured state coverage and gaps
+6. Layout and rhythm observations
+7. Included/excluded page rationale
+8. Weak-evidence zones, taken from the confidence report
 
-Required output:
-
-- Weighted observations by cluster
-- Visual token candidates + confidence
-- Verbal tone candidates + confidence
-- Component inventory candidates
-- Layout/rhythm observations
-- Included/excluded page rationale
-- Evidence references used for each claim
-
-Rules:
-
-- Be extractive, not prescriptive
-- Do not define final canonical tokens
-- Mark weak evidence zones explicitly
-
-Suggested prompt skeleton:
+**Rules:** extractive only. Do not choose canonical values. Do not restate a
+measured number as an estimate. Divergence between what the site declares and
+what it renders is a finding — surface it.
 
 ```text
-You are producing Prompt A (Evidence Extraction Report) for a brand-faithful modernization workflow.
-Use only the provided crawl evidence. Be extractive, not prescriptive.
+You are producing Prompt A (Evidence Interpretation) for a brand-faithful
+modernization workflow. Work only from the attached measurement JSON.
 
-Return:
-1) Weighted observations
-2) Visual token candidates (observed variants, accidental variants, confidence)
-3) Verbal/voice candidates (tone, CTA style, messaging hierarchy, vocabulary)
-4) Component inventory candidates (with recurrence estimates)
-5) Layout/rhythm observations
-6) Included/excluded page rationale
-7) Evidence references per claim
+The values are already measured. Your job is to interpret and weight them, not
+to re-estimate them. Quote measured numbers exactly; never round or adjust a
+confidence score.
 
-Do not choose final canonical values. Label uncertainty.
+Return: (1) weighted observations by cluster, (2) declared-vs-rendered
+divergence, (3) visual observations with variants and confidence, (4) voice
+candidates, (5) component inventory with state coverage, (6) layout and rhythm,
+(7) included/excluded page rationale, (8) weak-evidence zones.
+
+Do not choose canonical values. Label every uncertainty.
 ```
 
-## Prompt B: Brand-Faithful Modernization Synthesis
+## Prompt B — Brand-Faithful Modernization Synthesis
 
-Purpose:
+**Purpose:** turn interpreted evidence into the narrative design system around
+the already-emitted token artifacts.
 
-- Convert Prompt A evidence into a normalized design system and handoff package.
+**Input:** Prompt A output, `tokens.source.json`, `tokens.json`,
+`component-contracts.json`, `raw-vs-canonical-diff.md`, config.
 
-Input:
+**Output:** Executive Summary, Source Audit, Brand DNA, token documentation
+mirroring `tokens.json`, component library spec, page/template patterns, PNIE
+matrix, designer and developer handoff.
 
-- Prompt A output
-- User config/settings
-- Quality thresholds
+**Rules:**
 
-Required output:
-
-- Executive summary
-- Source audit summary
-- Visual + voice DNA
-- Canonical token system
-- Component library specs (anatomy, variants, states)
-- Page/template patterns
-- Preserve / Normalize / Improve / Exclude matrix
-- Developer handoff artifacts
-
-Rules:
-
-- Preserve recognizable brand signals
-- Normalize inconsistency
-- Improve accessibility/usability
-- Optimize for scalability and developer ergonomics
-- Avoid exact cloning / derivative replication
-- Mark ambiguity when evidence is weak
-
-Suggested prompt skeleton:
+- The emitted tokens are the source of truth. Document them; do not restate them
+  with different values. Disagreement with a token means fixing stage 3, not
+  writing a different number.
+- Preserve brand character; normalize implementation drift; improve
+  accessibility.
+- Every normalization you describe must already appear in
+  `raw-vs-canonical-diff.md`.
+- Mark each component state `measured` or `recommended`.
+- No exact page-layout reproduction, no protected-asset reuse.
+- Label low-confidence decisions using the emitted status values.
 
 ```text
 You are producing Prompt B (Brand-Faithful Modernization Synthesis).
-Transform the evidence into a site-inspired, normalized design system.
+
+The token set in tokens.json is already measured and emitted. Document and
+explain it — do not regenerate or alter values. If you believe a token is wrong,
+say so explicitly as a finding rather than quietly writing a different number.
 
 Requirements:
-- Preserve brand character (tone, color character, typography feel, layout rhythm)
-- Normalize implementation drift and one-offs
-- Integrate accessibility improvements
+- Preserve brand character (tone, colour character, typography feel, layout rhythm)
+- Normalize implementation drift; every normalization must already be in the diff report
+- Integrate accessibility improvements from contrast-findings.json
+- Mark every component state as measured or recommended
 - Do not reproduce exact layouts or copy protected assets
-- Label low-confidence decisions
+- Use the emitted confidence status to label uncertain decisions
 
-Return all sections required for packaging, including tokens, components, patterns, and dev handoff.
+Return all narrative sections required by output-package.md.
 ```
 
-## Prompt C: QA Critique and Repair Pass
+## Prompt C — QA Critique and Repair
 
-Purpose:
+**Purpose:** critique the synthesis against the measurements and validator
+findings, then patch minimally.
 
-- Critique Prompt B outputs using evidence + validator findings, then minimally patch issues.
+**Input:** Prompt B output, Prompt A summary, `validate_output_package.py`
+output, `fidelity-report.json`, `contrast-findings.json`,
+`extraction-confidence.json`.
 
-Input:
+**Output:** contradictions and fixes; missing states/anatomy; risky colour pairs
+with accessible alternatives; over-literal sections; unsupported certainty
+claims; revised sections ready for packaging.
 
-- Prompt B output
-- Prompt A evidence summary
-- Validator findings (contrast, completeness, conflicts, copying-risk flags)
+**Rules:** critique first, then patch. Prefer minimal changes. Preserve
+brand-faithful intent.
 
-Required output:
+Priority order:
 
-- Contradictions and fixes
-- Missing component states/anatomy fixes
-- Risky color pairs + accessible alternatives
-- Over-literal sections and revisions
-- Revised sections ready for packaging
-
-Rules:
-
-- Critique first, then patch
-- Prefer minimal changes that improve quality
-- Preserve brand-faithful modernization intent
-
-Suggested prompt skeleton:
+1. Claims that contradict the measurements — the highest-value defect this pass
+   catches, and the one most likely to survive into the deliverable
+2. Fidelity failures (mean palette ΔE > 0.07)
+3. Accessibility failures without a suggested alternative
+4. Component states presented as measured that are actually recommended
+5. Missing states or anatomy
+6. Token inconsistency across JSON / CSS / Tailwind / reports
+7. Over-literal copying risk
+8. Unsupported certainty claims
 
 ```text
 You are Prompt C (QA Critique and Repair).
-First identify defects and risks in the synthesized design system.
-Then provide targeted revisions only where needed.
 
-Prioritize:
-1) Accessibility failures
-2) Missing component states/anatomy
-3) Token inconsistency/conflicts
-4) Over-literal copying risk
-5) Unsupported certainty claims
+First identify defects. Check every quantitative claim in the synthesis against
+the measurement JSON — a number in the prose that does not match the measured
+value is the defect to find first.
+
+Then patch, minimally, in this priority order:
+1) Claims contradicting the measurements
+2) Fidelity failures
+3) Accessibility failures lacking an alternative
+4) Recommended states presented as measured
+5) Missing component states or anatomy
+6) Token inconsistency across artifacts
+7) Over-literal copying risk
+8) Unsupported certainty
+
+Do not alter measured values, confidence scores, or emitted tokens. Report those
+as findings for a pipeline re-run instead.
 ```
 
-## Recommended machine-readable intermediates
+## Machine-readable intermediates
 
 - `prompt-a.evidence-report.json`
 - `prompt-b.synthesis-draft.json`
 - `prompt-c.revisions.json`
 
-These improve reproducibility and allow selective regeneration (tokens/components/patterns/dev handoff).
+These make runs reproducible and let sections be regenerated independently.
+Because measurement and synthesis are separate, a prompt can be re-run without
+re-crawling — and stages 3–5 can be re-run without touching the prompts.
