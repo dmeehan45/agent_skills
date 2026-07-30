@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * capture_site.mjs — measurement layer for public-site-design-system-modernizer.
+ * capture_site.mjs — measurement layer for design-system-extractor.
  *
  * Renders each public URL in a real browser and measures what is actually on the
  * page instead of inferring it from markup or screenshots. Emits one JSON file

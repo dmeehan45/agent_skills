@@ -29,7 +29,7 @@ import xml.etree.ElementTree as ET
 from collections import defaultdict
 from typing import Any
 
-USER_AGENT = "psdsm-design-system-extractor/1.0 (+public-site-design-system-modernizer)"
+USER_AGENT = "design-system-extractor/1.0 (+design-system-extractor)"
 
 # Path patterns -> template type. Order matters: first match wins.
 TEMPLATE_PATTERNS: list[tuple[str, str]] = [

@@ -24,7 +24,7 @@ skills/
     references/
       report-template.md
       scan-playbook.md
-  public-site-design-system-modernizer/
+  design-system-extractor/
     SKILL.md
     references/
     scripts/
@@ -53,7 +53,7 @@ and other agents that support it.
 | --- | --- |
 | [`frontend-polish`](skills/frontend-polish/) | Design guardrails that keep new UI on-brand and free of the tell-tale "AI-generated" look. |
 | [`ux-quality-review`](skills/ux-quality-review/) | A structured UX and visual-quality review — accessibility, flow, clarity, mobile — with prioritized fixes. |
-| [`public-site-design-system-modernizer`](skills/public-site-design-system-modernizer/) | Measure a public website in a real browser — colours, type, spacing, hover and focus states, dark mode — and turn what it finds into a ready-to-use design system: tokens, Tailwind themes, component specs, and handoff docs. Checks its own work against the original pages, and stays brand-faithful without cloning. |
+| [`design-system-extractor`](skills/design-system-extractor/) | Measure a public website in a real browser — colours, type, spacing, hover and focus states, dark mode — and turn what it finds into a ready-to-use design system: tokens, Tailwind themes, component specs, and handoff docs. Checks its own work against the original pages, and stays brand-faithful without cloning. |
 
 ### Writing & content
 | Skill | What it does |

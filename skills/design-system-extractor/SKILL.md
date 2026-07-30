@@ -1,5 +1,5 @@
 ---
-name: public-site-design-system-modernizer
+name: design-system-extractor
 description: Extract a brand-faithful design system from a public website by measuring its rendered pages in a real browser — computed styles, the site's own CSS custom properties, interaction states, dark mode — then emitting DTCG tokens, layered CSS, Tailwind v3/v4 themes, and component contracts, verified by a round-trip fidelity check against the source pixels. Use when someone wants to extract, capture, or reverse-engineer the design system, tokens, brand palette, typography, or component styles of a public site, or build a site-inspired (not cloned) modernized baseline for a rebuild or redesign.
 ---
 
@@ -40,7 +40,7 @@ screenshots, and do not hand-write values into the generated artifacts.
 Full command reference, flags, and troubleshooting: `references/pipeline.md`.
 
 ```bash
-SKILL=skills/public-site-design-system-modernizer/scripts
+SKILL=skills/design-system-extractor/scripts
 OUT=design-system-output
 
 python3 $SKILL/discover_urls.py https://example.com --out crawl-plan.json --max-pages 14
