@@ -51,6 +51,7 @@ and other agents that support it.
 ### Design & UX
 | Skill | What it does |
 | --- | --- |
+| [`premium-calm`](skills/premium-calm/) | Make a product feel composed and trustworthy instead of noisy. Measures the real interface in a browser — contrast, tap-target sizes, what competes for attention, what still moves when someone asks for less motion — scores it out of 100 with a release gate, then proposes an ordered plan to get from where it is to where it should be, and carries it out once you approve. Works for any website, web app, or mobile app; it works out what "calm" means for your kind of product rather than imposing one look. |
 | [`frontend-polish`](skills/frontend-polish/) | Design guardrails that keep new UI on-brand and free of the tell-tale "AI-generated" look. |
 | [`ux-quality-review`](skills/ux-quality-review/) | A structured UX and visual-quality review — accessibility, flow, clarity, mobile — with prioritized fixes. |
 | [`design-system-extractor`](skills/design-system-extractor/) | Measure a public website in a real browser — colours, type, spacing, hover and focus states, dark mode — and turn what it finds into a ready-to-use design system: tokens, Tailwind themes, component specs, and handoff docs. Checks its own work against the original pages, and stays brand-faithful without cloning. |
