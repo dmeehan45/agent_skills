@@ -1,0 +1,115 @@
+{
+  "spec": "premium-calm/tokens@1",
+  "project": "Worked example",
+  "prefix": "pc",
+  "note": "Starting point, not a house palette. Re-derive every value from the product's own brand and re-run check_contrast.py before proposing it. The accent below is the worked example's signature colour; substitute the product's.",
+
+  "color": {
+    "light": {
+      "canvas": "#F6F4EF",
+      "surface": "#FFFFFF",
+      "surface-raised": "#FFFFFF",
+      "surface-sunken": "#EFEDE6",
+      "surface-inverse": "#121310",
+      "text-primary": "#171814",
+      "text-secondary": "#5C6058",
+      "text-muted": "#6E7269",
+      "text-inverse": "#FFFFFF",
+      "text-inverse-muted": "#A7ADA1",
+      "accent": "#C6FF1A",
+      "accent-ink": "#171814",
+      "accent-edge": "#6E9200",
+      "accent-quiet": "#E8F5C9",
+      "accent-quiet-ink": "#2E3D07",
+      "focus": "#365314",
+      "border-subtle": "#E2DFD6",
+      "border-default": "#938D7C",
+      "success": "#1F6B3A",
+      "success-surface": "#E4F1E8",
+      "warning": "#7A5209",
+      "warning-surface": "#F8EEDA",
+      "danger": "#9B1C1C",
+      "danger-surface": "#F8E4E4",
+      "info": "#1F4E79",
+      "info-surface": "#E3EDF6",
+      "disabled-text": "#6B6F67",
+      "disabled-surface": "#EBE9E2"
+    },
+    "dark": {
+      "canvas": "#121310",
+      "surface": "#1B1D18",
+      "surface-raised": "#232620",
+      "surface-sunken": "#0D0E0B",
+      "surface-inverse": "#F6F4EF",
+      "text-primary": "#FFFFFF",
+      "text-secondary": "#A7ADA1",
+      "text-muted": "#8E9389",
+      "text-inverse": "#171814",
+      "text-inverse-muted": "#5C6058",
+      "accent": "#C6FF1A",
+      "accent-ink": "#171814",
+      "accent-edge": "#C6FF1A",
+      "accent-quiet": "#2C3A12",
+      "accent-quiet-ink": "#DCEFA8",
+      "focus": "#C6FF1A",
+      "border-subtle": "#2B2E27",
+      "border-default": "#6A7064",
+      "success": "#7FD69B",
+      "success-surface": "#16301F",
+      "warning": "#E8C275",
+      "warning-surface": "#33270D",
+      "danger": "#F09A9A",
+      "danger-surface": "#3A1A1A",
+      "info": "#9CC5E8",
+      "info-surface": "#152A3D",
+      "disabled-text": "#7C8177",
+      "disabled-surface": "#22251F"
+    }
+  },
+
+  "pairs": [
+    { "fg": "text-primary", "bg": "canvas", "use": "body", "role": "default body text on the page ground" },
+    { "fg": "text-primary", "bg": "surface", "use": "body", "role": "body text on a card" },
+    { "fg": "text-secondary", "bg": "canvas", "use": "body", "role": "metadata on the page ground" },
+    { "fg": "text-secondary", "bg": "surface", "use": "body", "role": "metadata on a card" },
+    { "fg": "text-muted", "bg": "surface", "use": "body", "role": "supplemental metadata" },
+    { "fg": "text-inverse", "bg": "surface-inverse", "use": "body", "role": "text on the cinematic surface" },
+    { "fg": "text-inverse-muted", "bg": "surface-inverse", "use": "body", "role": "metadata on the cinematic surface" },
+    { "fg": "accent-ink", "bg": "accent", "use": "body", "role": "label on the commitment action" },
+    { "fg": "focus", "bg": "canvas", "use": "non-text", "role": "focus ring on the page ground" },
+    { "fg": "focus", "bg": "surface", "use": "non-text", "role": "focus ring on a card" },
+    { "fg": "border-default", "bg": "surface", "use": "non-text", "role": "field and control boundary" },
+    { "fg": "accent-edge", "bg": "canvas", "use": "non-text", "role": "selected-state outline — see note: the raw accent is only 1.08:1 on a light canvas, so it can be a FILL with dark ink but never a thin indicator" },
+    { "fg": "accent-quiet-ink", "bg": "accent-quiet", "use": "body", "role": "selected chip label on the quiet accent tint — the ink flips with the mode, the tint alone cannot" },
+    { "fg": "success", "bg": "success-surface", "use": "body", "role": "confirmed / available status" },
+    { "fg": "warning", "bg": "warning-surface", "use": "body", "role": "pending / time-sensitive status" },
+    { "fg": "danger", "bg": "danger-surface", "use": "body", "role": "failed / destructive status" },
+    { "fg": "info", "bg": "info-surface", "use": "body", "role": "informational status" },
+    { "fg": "disabled-text", "bg": "disabled-surface", "use": "non-text", "role": "disabled control (WCAG exempts these; premium calm still keeps them readable)" }
+  ],
+
+  "type": {
+    "display-xl": { "size": "clamp(2.5rem, 5vw, 4rem)", "line": "1.05", "tracking": "-0.03em", "weight": "600", "use": "marketing or destination hero" },
+    "title-lg":   { "size": "2rem",     "line": "1.15", "tracking": "-0.02em", "weight": "600", "use": "page title" },
+    "title-md":   { "size": "1.5rem",   "line": "1.25", "tracking": "-0.01em", "weight": "600", "use": "section title, object name" },
+    "title-sm":   { "size": "1.25rem",  "line": "1.3",  "tracking": "0",       "weight": "600", "use": "card group or sheet title" },
+    "body-lg":    { "size": "1.125rem", "line": "1.55", "tracking": "0",       "weight": "400", "use": "lead and important explanation" },
+    "body-md":    { "size": "1rem",     "line": "1.5",  "tracking": "0",       "weight": "400", "use": "default body" },
+    "label":      { "size": "0.875rem", "line": "1.3",  "tracking": "0.01em",  "weight": "500", "use": "control and metadata label" },
+    "caption":    { "size": "0.8125rem","line": "1.4",  "tracking": "0",       "weight": "400", "use": "supplemental metadata only — never price, policy, or error" }
+  },
+
+  "space": { "scale": [4, 8, 12, 16, 24, 32, 48, 64, 96] },
+
+  "radius": { "sm": 8, "md": 12, "lg": 16, "xl": 24, "full": 9999 },
+
+  "motion": {
+    "instant":  { "ms": 100, "use": "press, hover, focus, selected-state acknowledgement" },
+    "direct":   { "ms": 150, "use": "toggle, chip, icon, small disclosure" },
+    "standard": { "ms": 220, "use": "menu, toast, card-state transition" },
+    "spatial":  { "ms": 320, "use": "sheet, route relationship, media expansion" },
+    "ambient":  { "ms": 700, "use": "rare, non-blocking background atmosphere only" }
+  },
+
+  "target": { "apple": 44, "android": 48, "unit": "pt/dp minimum on the minor axis" }
+}

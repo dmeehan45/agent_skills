@@ -1,0 +1,263 @@
+<!--
+  Premium-calm assessment — artifact template.
+
+  Fill every <placeholder>, delete the sections that do not apply, then publish
+  with the Artifact tool. The page is deliberately built from the same rules it
+  reports on: one dominant cluster per region, a scarce accent, three emphasis
+  tiers, tokenised spacing, and a hierarchy that survives grayscale.
+
+  Constraints that matter when publishing:
+  - Self-contained only. Inline all CSS; embed screenshots as data: URIs
+    (`base64 -w0 shot.png`). External URLs are blocked by the CSP.
+  - Keep the whole page under 16MB, data: URIs included. Downscale the renders
+    before embedding — a 780px-wide PNG is plenty for a squint comparison.
+  - Wide tables scroll inside their own container; the page body never scrolls
+    horizontally.
+-->
+<title>Premium-calm assessment — &lt;product&gt;</title>
+
+<style>
+  :root {
+    --canvas: #F6F4EF;
+    --surface: #FFFFFF;
+    --sunken: #EFEDE6;
+    --ink: #171814;
+    --ink-2: #5C6058;
+    --ink-3: #6E7269;
+    --line: #E2DFD6;
+    --line-strong: #938D7C;
+    --accent: #6E9200;
+    --accent-fill: #C6FF1A;
+    --accent-ink: #171814;
+    --ok: #1F6B3A;
+    --ok-bg: #E4F1E8;
+    --warn: #7A5209;
+    --warn-bg: #F8EEDA;
+    --bad: #9B1C1C;
+    --bad-bg: #F8E4E4;
+    --radius: 16px;
+    --radius-sm: 8px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --canvas: #121310; --surface: #1B1D18; --sunken: #0D0E0B;
+      --ink: #FFFFFF; --ink-2: #A7ADA1; --ink-3: #8E9389;
+      --line: #2B2E27; --line-strong: #6A7064;
+      --accent: #C6FF1A; --accent-fill: #C6FF1A; --accent-ink: #171814;
+      --ok: #7FD69B; --ok-bg: #16301F;
+      --warn: #E8C275; --warn-bg: #33270D;
+      --bad: #F09A9A; --bad-bg: #3A1A1A;
+    }
+  }
+  :root[data-theme="dark"] {
+    --canvas: #121310; --surface: #1B1D18; --sunken: #0D0E0B;
+    --ink: #FFFFFF; --ink-2: #A7ADA1; --ink-3: #8E9389;
+    --line: #2B2E27; --line-strong: #6A7064;
+    --accent: #C6FF1A; --accent-fill: #C6FF1A; --accent-ink: #171814;
+    --ok: #7FD69B; --ok-bg: #16301F;
+    --warn: #E8C275; --warn-bg: #33270D;
+    --bad: #F09A9A; --bad-bg: #3A1A1A;
+  }
+
+  body {
+    background: var(--canvas);
+    color: var(--ink);
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 17px;
+    line-height: 1.55;
+    margin: 0;
+    padding: 48px 24px 96px;
+  }
+  .wrap { max-width: 940px; margin: 0 auto; }
+
+  h1 { font-size: clamp(2rem, 5vw, 2.75rem); line-height: 1.1; letter-spacing: -0.025em; margin: 0 0 8px; }
+  h2 { font-size: 1.5rem; line-height: 1.25; letter-spacing: -0.015em; margin: 64px 0 4px; }
+  h3 { font-size: 1.125rem; line-height: 1.3; margin: 32px 0 8px; }
+  .lede { color: var(--ink-2); font-size: 1.0625rem; max-width: 68ch; margin: 0 0 4px; }
+  .sub { color: var(--ink-3); font-size: 0.875rem; margin: 0 0 32px; }
+  p { max-width: 72ch; }
+
+  .headline {
+    display: flex; flex-wrap: wrap; gap: 24px; align-items: baseline;
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 24px; margin: 32px 0;
+  }
+  .headline .score { font-size: 3rem; line-height: 1; letter-spacing: -0.03em; font-weight: 600; }
+  .headline .score small { font-size: 1rem; color: var(--ink-3); font-weight: 400; letter-spacing: 0; }
+  .headline .band { color: var(--ink-2); }
+
+  .verdict { display: inline-block; border-radius: 999px; padding: 6px 14px; font-size: 0.875rem; font-weight: 600; }
+  .verdict.pass    { background: var(--ok-bg);   color: var(--ok); }
+  .verdict.blocked { background: var(--bad-bg);  color: var(--bad); }
+
+  .grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); margin: 24px 0; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; }
+  .card h4 { margin: 0 0 4px; font-size: 0.8125rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); font-weight: 600; }
+  .card .value { font-size: 1.75rem; font-weight: 600; letter-spacing: -0.02em; }
+  .card .note { color: var(--ink-2); font-size: 0.875rem; }
+  .card.over { border-color: var(--bad); }
+  .card.over .value { color: var(--bad); }
+
+  .scroll { overflow-x: auto; margin: 16px 0; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 0.9375rem; }
+  th, td { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); font-weight: 600; white-space: nowrap; }
+  tr:last-child td { border-bottom: 0; }
+  td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+  /* Severity and status carry a label and a shape, never colour alone. */
+  .sev { font-weight: 700; font-size: 0.8125rem; border-radius: var(--radius-sm); padding: 2px 8px; white-space: nowrap; }
+  .sev.s4 { background: var(--bad-bg);  color: var(--bad); }
+  .sev.s3 { background: var(--warn-bg); color: var(--warn); }
+  .sev.s2, .sev.s1 { background: var(--sunken); color: var(--ink-2); }
+
+  .meter { display: flex; align-items: center; gap: 12px; }
+  .meter .track { flex: 1; min-width: 90px; height: 8px; border-radius: 999px; background: var(--sunken); overflow: hidden; }
+  .meter .fill { height: 100%; background: var(--accent); border-radius: 999px; }
+  .meter .n { font-variant-numeric: tabular-nums; color: var(--ink-2); font-size: 0.875rem; white-space: nowrap; }
+
+  .band-head { display: flex; flex-wrap: wrap; gap: 12px; align-items: baseline; margin: 40px 0 0; }
+  .band-head .tag { background: var(--sunken); color: var(--ink-2); border-radius: var(--radius-sm); padding: 3px 10px; font-size: 0.8125rem; font-weight: 600; }
+
+  figure { margin: 24px 0; }
+  .shots { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .shots img { width: 100%; height: auto; display: block; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--sunken); }
+  figcaption { color: var(--ink-2); font-size: 0.875rem; margin-top: 8px; }
+  .shot-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); font-weight: 600; margin-bottom: 6px; }
+
+  .callout { background: var(--sunken); border-left: 3px solid var(--accent); border-radius: var(--radius-sm); padding: 16px 20px; margin: 24px 0; }
+  .callout p { margin: 0; }
+  .muted { color: var(--ink-2); }
+  ul.tight { padding-left: 20px; }
+  ul.tight li { margin-bottom: 6px; }
+  hr { border: 0; border-top: 1px solid var(--line); margin: 64px 0 0; }
+  footer { color: var(--ink-3); font-size: 0.8125rem; margin-top: 24px; }
+</style>
+
+<div class="wrap">
+
+  <h1>Premium-calm assessment</h1>
+  <p class="lede">&lt;product&gt; — &lt;scope: surfaces and platforms&gt;</p>
+  <p class="sub">Assessed &lt;date&gt; · Evidence tier: &lt;measured live / local build / source-only / screenshots&gt;</p>
+
+  <div class="headline">
+    <div>
+      <div class="score">&lt;n&gt;<small>/100</small></div>
+      <div class="band">&lt;band name&gt;</div>
+    </div>
+    <div style="flex:1;min-width:240px">
+      <span class="verdict blocked">Release gate: blocked</span>
+      <p class="muted" style="margin:8px 0 0;font-size:0.9375rem">&lt;blockers, or "all gate conditions met"&gt;</p>
+    </div>
+  </div>
+
+  <h2>What calm means here</h2>
+  <p>&lt;One paragraph from calibration: the archetype, what calm means for this
+  product, and the moment that most determines trust.&gt;</p>
+
+  <div class="scroll">
+    <table>
+      <tbody>
+        <tr><th>Archetype</th><td>&lt;…&gt;</td></tr>
+        <tr><th>Highest stakes</th><td>&lt;the irreversible moment, and why&gt;</td></tr>
+        <tr><th>Journey priority</th><td>&lt;1 … 2 … 3 …&gt;</td></tr>
+        <tr><th>Must not change</th><td>&lt;signature assets and locked constraints&gt;</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Measured current state</h2>
+  <p class="muted">Readings from <code>measure_surface.mjs</code>. Cards outlined
+  in red are over the gate.</p>
+
+  <div class="grid">
+    <div class="card over"><h4>Contrast failures</h4><div class="value">&lt;n&gt;</div><div class="note">Gate: 0</div></div>
+    <div class="card over"><h4>Targets under 44pt</h4><div class="value">&lt;n&gt;</div><div class="note">Gate: 0</div></div>
+    <div class="card"><h4>No focus style</h4><div class="value">&lt;n&gt;</div><div class="note">Gate: 0</div></div>
+    <div class="card over"><h4>Moves under reduced motion</h4><div class="value">&lt;n&gt;</div><div class="note">Gate: 0</div></div>
+    <div class="card"><h4>Competing salience regions</h4><div class="value">&lt;n&gt;</div><div class="note">Target: 1 dominant</div></div>
+    <div class="card over"><h4>Accent coverage</h4><div class="value">&lt;n&gt;%</div><div class="note">Above the fold</div></div>
+  </div>
+
+  <h3>What the renders show</h3>
+  <figure>
+    <div class="shots">
+      <div><div class="shot-label">As rendered</div><img alt="&lt;surface&gt; as rendered" src="data:image/png;base64,&lt;…&gt;"></div>
+      <div><div class="shot-label">Squint</div><img alt="&lt;surface&gt; blurred, showing which masses dominate" src="data:image/png;base64,&lt;…&gt;"></div>
+      <div><div class="shot-label">Accent removed</div><img alt="&lt;surface&gt; with the accent neutralised" src="data:image/png;base64,&lt;…&gt;"></div>
+    </div>
+    <figcaption>&lt;What survives the squint, and in what order. What stops
+    reading as selected or primary once the accent is neutralised.&gt;</figcaption>
+  </figure>
+
+  <div class="callout">
+    <p>&lt;The single most persuasive finding, stated plainly. The accentless
+    render is usually it: if selected and unselected states become
+    indistinguishable, meaning depends on colour alone.&gt;</p>
+  </div>
+
+  <h2>Rubric</h2>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Criterion</th><th>Weight</th><th style="min-width:200px">Score</th><th>Weighted</th></tr></thead>
+      <tbody>
+        <!-- Repeat per criterion. Set the .fill width to score/5 as a percentage. -->
+        <tr>
+          <td>Task clarity and hierarchy</td>
+          <td class="num">15</td>
+          <td><div class="meter"><div class="track"><div class="fill" style="width:40%"></div></div><span class="n">2/5</span></div></td>
+          <td class="num">6.0</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Findings</h2>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>ID</th><th>Severity</th><th>Surface</th><th>Finding</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="num">PC-01</td>
+          <td><span class="sev s4">S4</span></td>
+          <td>&lt;surface&gt;</td>
+          <td>&lt;what fails, and what it costs the user&gt;</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>The change set</h2>
+  <p>Ordered in bands. Foundations first, then the highest-stakes journey, then
+  the rest. Transactional clarity precedes decorative refinement.</p>
+
+  <!-- Repeat per band. -->
+  <div class="band-head">
+    <h3 style="margin:0">Band 0 — Foundations</h3>
+    <span class="tag">&lt;n&gt; items</span>
+    <span class="tag">&lt;effort&gt;</span>
+  </div>
+  <p class="muted" style="margin-top:4px">Token layer, contrast, focus, targets,
+  reduced motion, spacing scale. Everything downstream inherits these.</p>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>ID</th><th>Change</th><th>Effort</th><th>Acceptance check</th></tr></thead>
+      <tbody>
+        <tr><td class="num">PC-&lt;n&gt;</td><td>&lt;current → target&gt;</td><td>&lt;S/M/L&gt;</td><td>&lt;how we will know&gt;</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Not changing</h2>
+  <p>&lt;The signature assets reassigned rather than removed, and the constraints
+  respected. A premium-calm pass that quietly erases the brand has failed even
+  with a perfect score.&gt;</p>
+
+  <hr>
+  <footer>
+    Measured with <code>premium-calm</code>. LCP and CLS are single-run lab
+    numbers; confirm against field p75 before treating them as gates.
+    &lt;List anything reviewed by hand rather than measured.&gt;
+  </footer>
+
+</div>
