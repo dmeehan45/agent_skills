@@ -59,6 +59,7 @@ and other agents that support it.
 ### Writing & content
 | Skill | What it does |
 | --- | --- |
+| [`lower-cognitive-load`](skills/lower-cognitive-load/) | Turn dense, hard-going writing into something a busy reader will actually finish — an email blast, a note to users, a short write-up meant to land in under five minutes. It measures how expensive the original is to read, agrees with you on what to cut *before* writing a word, rebuilds it point-first, then rewrites it so it sounds like a real person saying it out loud instead of an academic or an AI. Nothing gets dropped or softened quietly: every rewrite ships with a cut list and a fidelity check. |
 | [`content-rigor`](skills/content-rigor/) | Fact-check and source-check user-facing writing so its claims are true, traceable, and earned — not just nicely worded. |
 | [`i18n-propagate`](skills/i18n-propagate/) | When you change a piece of copy, push the update into every language catalog and check nothing was left behind in English. |
 
