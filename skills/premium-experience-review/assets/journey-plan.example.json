@@ -1,0 +1,75 @@
+{
+  "project": "Ladle (example)",
+  "baseUrl": "http://localhost:3000",
+  "viewports": ["phone", "laptop"],
+  "journeys": [
+    {
+      "id": "first-arrival",
+      "intent": "A new visitor understands what this is and what to do first, in the first minute, without reading instructions",
+      "steps": [
+        { "goto": "/", "capture": "landing" },
+        { "scroll": "bottom", "capture": "landing-end" },
+        { "click": "text=Get started", "capture": "signup" },
+        { "fill": { "selector": "input[name=email]", "value": "reviewer@example.com" } },
+        { "press": "Enter", "waitFor": "text=Check your inbox", "capture": "magic-link-sent" }
+      ]
+    },
+    {
+      "id": "first-action",
+      "intent": "A signed-in new user gets a week of dinners without configuring anything",
+      "steps": [
+        { "goto": "/plan", "capture": "plan-empty-or-default" },
+        { "click": "role=button[name=\"Swap\"]", "capture": "swap-sheet" },
+        { "click": "text=Sheet-pan salmon", "waitFor": "[role=status]", "capture": "swapped" }
+      ]
+    },
+    {
+      "id": "first-outcome",
+      "intent": "The first shopping list is generated and feels like the product did the work",
+      "steps": [
+        { "goto": "/shop", "capture": "shopping-list" },
+        { "click": "role=checkbox >> nth=0", "capture": "first-item-checked" }
+      ]
+    },
+    {
+      "id": "repeat-use",
+      "intent": "On a return visit the loop (today's dinner) is the first thing on screen",
+      "steps": [
+        { "goto": "/", "capture": "home-returning" },
+        { "hover": "text=Tonight", "capture": "tonight-hover" }
+      ]
+    },
+    {
+      "id": "undo",
+      "intent": "Removing a meal is reversible without a confirmation dialog",
+      "steps": [
+        { "goto": "/plan", "capture": "plan" },
+        { "click": "role=button[name=\"Remove Tuesday\"]", "capture": "removed" },
+        { "click": "text=Undo", "capture": "restored" }
+      ]
+    },
+    {
+      "id": "error",
+      "intent": "A failed save keeps the user's work and says what happened",
+      "steps": [
+        { "goto": "/plan?fixture=save-fails", "capture": "plan-fixture" },
+        { "click": "role=button[name=\"Swap\"]" },
+        { "click": "text=Sheet-pan salmon", "wait": 1500, "capture": "save-failed" }
+      ]
+    },
+    {
+      "id": "empty-state",
+      "intent": "An emptied plan offers the next action rather than explaining the emptiness",
+      "steps": [
+        { "goto": "/plan?fixture=empty", "capture": "plan-empty" }
+      ]
+    },
+    {
+      "id": "returning-after-time-away",
+      "intent": "Two weeks later the product re-orients rather than shaming or showing stale state",
+      "steps": [
+        { "goto": "/?fixture=stale-14d", "capture": "home-stale" }
+      ]
+    }
+  ]
+}
