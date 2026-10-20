@@ -75,6 +75,7 @@ and other agents that support it.
 ### Engineering & operations
 | Skill | What it does |
 | --- | --- |
+| [`retro`](skills/retro/) | A fortnightly look at *how* the work with AI agents got done, not what was built: what got redone, what sat waiting, which review findings nobody answered, which rules the agents broke, and what you had to tell them twice. It reads four sources at once (commit history, pull requests, the operators' own corrections, and your log and rule files), fills the same scorecard every run so the next one can say better or worse, checks whether last time's fixes held, makes the small process fixes itself, and hands you only the decisions that are yours. If the repo has no record of its agent sessions, it sets one up first: an **agent action ledger** (one small file per session, metadata only, never customer content) that any later review can read. Works for one person with one agent and for a team running several agents across many repos. |
 | [`analytics-instrument`](skills/analytics-instrument/) | Make sure a change is tracked correctly against your analytics event catalog — no missing or orphaned events, no PII leaks. |
 | [`conversational-ai-efficiency-audit`](skills/conversational-ai-efficiency-audit/) | Audit a chatbot / LLM system for ways to cut cost, latency, and token usage without hurting quality or safety. |
 | [`readiness-loop`](skills/readiness-loop/) | A recurring maintenance cycle that keeps a codebase handoff-ready and works down the tech-debt list one safe change at a time. |
